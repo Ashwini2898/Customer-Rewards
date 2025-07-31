@@ -34,8 +34,56 @@ public class Transaction {
     @ManyToOne
 	@JoinColumn(name = "customer_id",nullable = false)
 	private Customer customer;
-
+    
     @Column(name="transaction_date",nullable = false)
     private LocalDateTime date = LocalDateTime.now();
+    
+    @Column(name = "awarded_points")
+	private Integer awardedPoints;
 
+    public Integer getTransactionId() {
+		return transactionId;
+	}
+
+	public Integer getAwardedPoints() {
+		return awardedPoints;
+	}
+
+	public void setAwardedPoints(Integer awardedPoints) {
+		this.awardedPoints = awardedPoints;
+	}
+
+	public void setTransactionId(Integer transactionId) {
+		this.transactionId = transactionId;
+	}
+
+	public Double getAmountSpent() {
+		return amountSpent;
+	}
+
+	public void setAmountSpent(Double amountSpent) {
+		this.amountSpent = amountSpent;
+	}
+
+	public Customer getCustomer() {
+		return customer;
+	}
+
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
+	}
+
+	public LocalDateTime getDate() {
+		return date;
+	}
+
+	public void setDate(LocalDateTime date) {
+		this.date = date;
+	}
+
+	
+
+	
+
+	
 }

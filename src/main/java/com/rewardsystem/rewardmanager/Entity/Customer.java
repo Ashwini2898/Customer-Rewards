@@ -27,18 +27,18 @@ public class Customer {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "customer_id")
-	private Integer custId;
+	private Integer customerId;
 	
 	@NotNull
 	@NotBlank(message="Please enter your name")
 	@Size(min=2, max=30,message=" Name should have atleast 2 characters")
-   @Column(name = "cust_name")
+   @Column(name = "customer_name")
 	private String custName;
 	
 	@NotNull
 	@NotBlank(message="Please enter your phone number")
 	@Pattern(regexp="([7-9][0-9]{9})")
-    @Column(name = "cust_mobile")
+    @Column(name = "customer_mobile")
 	private String custMobile;
 	
 	@NotNull
@@ -51,6 +51,59 @@ public class Customer {
 	 
 	 @OneToMany(mappedBy = "customer")
 	 private List<Transaction> transaction;
+
+	public Integer getCustomerId() {
+		return customerId;
+	}
+
+	public void setCustomerId(Integer customerId) {
+		this.customerId = customerId;
+	}
+
+	public String getCustName() {
+		return custName;
+	}
+
+	public void setCustName(String custName) {
+		this.custName = custName;
+	}
+
+	public String getCustMobile() {
+		return custMobile;
+	}
+
+	public void setCustMobile(String custMobile) {
+		this.custMobile = custMobile;
+	}
+
+	public Double getTotalSpent() {
+		return totalSpent;
+	}
+
+	public void setTotalSpent(Double totalSpent) {
+		this.totalSpent = totalSpent;
+	}
+
+	public Integer getRewardPoints() {
+		return rewardPoints;
+	}
+
+	public void setRewardPoints(Integer rewardPoints) {
+		this.rewardPoints = rewardPoints;
+	}
+
+	public List<Transaction> getTransaction() {
+		return transaction;
+	}
+
+	public void setTransaction(List<Transaction> transaction) {
+		this.transaction = transaction;
+	}
+
+	public Customer orElseThrow(Object object) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	 
 	 
 
