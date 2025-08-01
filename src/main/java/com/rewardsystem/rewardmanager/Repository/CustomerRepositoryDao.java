@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import com.rewardsystem.rewardmanager.Entity.Customer;
 
 @Repository
-public interface CustomerRepositoryDao extends JpaRepository<Customer,Integer> {
+public interface CustomerRepositoryDao extends JpaRepository<Customer,Long> {
 	
 
 	

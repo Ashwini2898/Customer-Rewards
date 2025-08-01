@@ -2,6 +2,7 @@ package com.rewardsystem.rewardmanager.Service;
 
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -43,7 +44,7 @@ public class TransactionServiceImpl {
 	}
 
 	@Transactional
-	public Transaction createTransaction(int customerId, double amount) {
+	public Transaction createTransaction(Long customerId, double amount) {
 		Customer customer = customerDao.findById(customerId)
 				.orElseThrow(() -> new RuntimeException("Customer not found"));
 
@@ -58,21 +59,45 @@ public class TransactionServiceImpl {
 		transactionRepository.save(txn);
 
 		Integer current = customer.getRewardPoints() == null ? 0 : customer.getRewardPoints();
-
+        Double totalSpent=customer.getTotalSpent()== null ? 0 : customer.getTotalSpent();
 		customer.setRewardPoints(current + points);
-
+		customer.setTotalSpent(totalSpent+amount);
+		
 		customerDao.save(customer);  
 
 		return txn;
 	}
 
 
-	public Integer getCustomerPoints(Integer customerId) {
+	public Integer getCustomerPoints(Long customerId) {
 		Customer customer = customerDao.findById(customerId)
 				.orElseThrow(() -> new RuntimeException("Customer not found"));
-		System.out.println("Reward Points: " + customer.getRewardPoints());
 		return customer.getRewardPoints() != null ? customer.getRewardPoints() : 0;
 	}
+	
+	public List<Transaction> getTransactionsForMonth(int year, int month) {
+	    LocalDateTime start = LocalDateTime.of(year, month, 1, 0, 0);
+	    LocalDateTime end = start.withDayOfMonth(start.toLocalDate().lengthOfMonth()).withHour(23).withMinute(59).withSecond(59);
+
+	    return transactionRepository.findAllByDateBetween(start, end);
+	}
+	
+	 public List<Transaction> getTransactionsForCustomerLastThreeMonths(Long customerId) {
+	        LocalDateTime now = LocalDateTime.now();
+	        LocalDateTime start = now.minusMonths(3).withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
+	        LocalDateTime end = now;
+
+	        return transactionRepository.findAllByCustomer_CustomerIdAndDateBetween(customerId, start, end);
+	    }
+	 
+	 public List<Transaction> getTransactionsForCustomerLastOneMonth(Long customerId) {
+	        LocalDateTime now = LocalDateTime.now();
+	        LocalDateTime start = now.minusMonths(1).withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
+	        LocalDateTime end = now;
+
+	        return transactionRepository.findAllByCustomer_CustomerIdAndDateBetween(customerId, start, end);
+	    }
+	
 }
 
 

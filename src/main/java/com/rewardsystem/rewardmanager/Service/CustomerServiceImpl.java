@@ -1,5 +1,6 @@
 package com.rewardsystem.rewardmanager.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -8,14 +9,20 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import com.rewardsystem.rewardmanager.Entity.Customer;
+import com.rewardsystem.rewardmanager.Entity.Transaction;
 import com.rewardsystem.rewardmanager.Exception.CustomerNotFoundException;
+import com.rewardsystem.rewardmanager.Exception.InvalidTransactionException;
 import com.rewardsystem.rewardmanager.Repository.CustomerRepositoryDao;
+import com.rewardsystem.rewardmanager.Repository.TransactionRepositoryDao;
 
 @Service
 public class CustomerServiceImpl {
 	
 	@Autowired
 	CustomerRepositoryDao customerDao;
+	
+	@Autowired
+	TransactionRepositoryDao transactionRepository;
 	
 	//calling addCustomer method of DAO layer
 		/**
@@ -47,7 +54,7 @@ public class CustomerServiceImpl {
 	 * getCustomerById
 	 */
 	
-	public Customer getCustomerById(Integer customerId) throws CustomerNotFoundException 
+	public Customer getCustomerById(Long customerId) throws CustomerNotFoundException 
 	{
 		try
 		{            
@@ -77,7 +84,7 @@ public class CustomerServiceImpl {
 	 * deleteCustomer
 	 */
 	
-	public Integer deleteCustomer(Integer customerId) throws CustomerNotFoundException 
+	public Long deleteCustomer(Long customerId) throws CustomerNotFoundException 
 	{
 		try 
 		{            
@@ -142,6 +149,74 @@ public class CustomerServiceImpl {
 		}
 	}
 	
-	
+	public List<Transaction> getTransactionsForMonth(int year, int month)  throws InvalidTransactionException{
+		
+		try {
+        LocalDateTime start = LocalDateTime.of(year, month, 1, 0, 0);
+        LocalDateTime end = start.withDayOfMonth(start.toLocalDate().lengthOfMonth())
+                                 .withHour(23).withMinute(59).withSecond(59);
 
+        return transactionRepository.findAllByDateBetween(start, end);
+    }
+		catch(DataAccessException dataAccessException) 
+		{
+			throw new InvalidTransactionException(dataAccessException.getMessage());
+		}
+		catch(Exception exception)
+		{
+			throw new InvalidTransactionException(exception.getMessage());
+		}
+	}
+	
+	
+	public List<Transaction> getTransactionsForLastThreeMonths() throws InvalidTransactionException{
+		try {
+	    LocalDateTime end = LocalDateTime.now();
+	    LocalDateTime start = end.minusMonths(3).withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
+
+	    return transactionRepository.findAllByDateBetween(start, end);
+		}
+		catch(DataAccessException dataAccessException) 
+		{
+			throw new InvalidTransactionException(dataAccessException.getMessage());
+		}
+		catch(Exception exception)
+		{
+			throw new InvalidTransactionException(exception.getMessage());
+		}
+	}
+	
+	public List<Transaction> getCustomerTransactionsForLastThreeMonths(Long customerId) throws InvalidTransactionException{
+		try {
+	    LocalDateTime end = LocalDateTime.now();
+	    LocalDateTime start = end.minusMonths(3).withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
+
+	    return transactionRepository.findAllByCustomer_CustomerIdAndDateBetween(customerId, start, end);
+		}
+		catch(DataAccessException dataAccessException) 
+		{
+			throw new InvalidTransactionException(dataAccessException.getMessage());
+		}
+		catch(Exception exception)
+		{
+			throw new InvalidTransactionException(exception.getMessage());
+		}
+	}
+	
+	public List<Transaction> getCustomerTransactionsForLastOneMonth(Long customerId) throws InvalidTransactionException{
+		try {
+	    LocalDateTime end = LocalDateTime.now();
+	    LocalDateTime start = end.minusMonths(1).withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
+
+	    return transactionRepository.findAllByCustomer_CustomerIdAndDateBetween(customerId, start, end);
+		}
+		catch(DataAccessException dataAccessException) 
+		{
+			throw new InvalidTransactionException(dataAccessException.getMessage());
+		}
+		catch(Exception exception)
+		{
+			throw new InvalidTransactionException(exception.getMessage());
+		}
+	}
 }

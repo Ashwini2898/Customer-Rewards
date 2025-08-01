@@ -42,7 +42,7 @@ public class CustomerController {
      */
    
     @GetMapping("/{id}")
-    public ResponseEntity<Customer> getCustomerById(@PathVariable Integer id)
+    public ResponseEntity<Customer> getCustomerById(@PathVariable Long id)
     {
         try 
         {
@@ -118,11 +118,11 @@ public class CustomerController {
      */
     
     @DeleteMapping("/{id}")
-    public String deleteCustomer(@PathVariable Integer id) 
+    public String deleteCustomer(@PathVariable Long id) 
     {
         try
         {
-            Integer status= customerService.deleteCustomer(id);
+            Long status= customerService.deleteCustomer(id);
             if(status ==1) 
             {
                 logger.info("customer: "+id+" deleted from database");

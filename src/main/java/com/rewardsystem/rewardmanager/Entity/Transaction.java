@@ -27,7 +27,7 @@ public class Transaction {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "transaction_id")
-	private Integer transactionId;
+	private Long transactionId;
 
 	
 	@Column(name = "amount_spent")
@@ -43,7 +43,7 @@ public class Transaction {
     @Column(name = "awarded_points")
 	private Integer awardedPoints;
 
-    public Integer getTransactionId() {
+    public Long getTransactionId() {
 		return transactionId;
 	}
 
@@ -55,7 +55,7 @@ public class Transaction {
 		this.awardedPoints = awardedPoints;
 	}
 
-	public void setTransactionId(Integer transactionId) {
+	public void setTransactionId(Long transactionId) {
 		this.transactionId = transactionId;
 	}
 
