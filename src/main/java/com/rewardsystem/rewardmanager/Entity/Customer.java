@@ -27,7 +27,7 @@ public class Customer {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "customer_id")
-	private Integer customerId;
+	private Long customerId;
 	
 	@NotNull
 	@NotBlank(message="Please enter your name")
@@ -50,7 +50,7 @@ public class Customer {
 	 @OneToMany(mappedBy = "customer")
 	 private List<Transaction> transaction;
 
-	public Integer getCustomerId() {
+	public Long getCustomerId() {
 		return customerId;
 	}
 
@@ -78,6 +78,10 @@ public class Customer {
 
 	public Integer getRewardPoints() {
 		return rewardPoints;
+	}
+
+	public void setTotalSpent(Double totalSpent) {
+		this.totalSpent = totalSpent;
 	}
 
 	
