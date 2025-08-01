@@ -41,13 +41,11 @@ public class Customer {
     @Column(name = "customer_mobile")
 	private String custMobile;
 	
-	@NotNull
-	@NotBlank(message="Please enter amount spent")
 	 @Column(name = "total_spent")
 		private Double totalSpent;
 	 
 	 @Column(name = "reward_points")
-		private Integer rewardPoints;
+		private Integer rewardPoints =0;
 	 
 	 @OneToMany(mappedBy = "customer")
 	 private List<Transaction> transaction;
@@ -56,54 +54,36 @@ public class Customer {
 		return customerId;
 	}
 
-	public void setCustomerId(Integer customerId) {
-		this.customerId = customerId;
-	}
+	
 
 	public String getCustName() {
 		return custName;
 	}
 
-	public void setCustName(String custName) {
-		this.custName = custName;
-	}
+	
 
 	public String getCustMobile() {
 		return custMobile;
 	}
 
-	public void setCustMobile(String custMobile) {
-		this.custMobile = custMobile;
-	}
+	
 
 	public Double getTotalSpent() {
 		return totalSpent;
 	}
 
-	public void setTotalSpent(Double totalSpent) {
-		this.totalSpent = totalSpent;
+	public void setRewardPoints(Integer rewardPoints) {
+	    this.rewardPoints = rewardPoints;
 	}
 
 	public Integer getRewardPoints() {
 		return rewardPoints;
 	}
 
-	public void setRewardPoints(Integer rewardPoints) {
-		this.rewardPoints = rewardPoints;
-	}
+	
 
-	public List<Transaction> getTransaction() {
-		return transaction;
-	}
 
-	public void setTransaction(List<Transaction> transaction) {
-		this.transaction = transaction;
-	}
 
-	public Customer orElseThrow(Object object) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 	 
 	 
 

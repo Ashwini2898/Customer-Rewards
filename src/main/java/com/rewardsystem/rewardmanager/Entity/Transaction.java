@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -14,6 +15,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -27,11 +29,11 @@ public class Transaction {
     @Column(name = "transaction_id")
 	private Integer transactionId;
 
-	@NotNull
+	
 	@Column(name = "amount_spent")
     private Double amountSpent;
 
-    @ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "customer_id",nullable = false)
 	private Customer customer;
     
@@ -65,13 +67,7 @@ public class Transaction {
 		this.amountSpent = amountSpent;
 	}
 
-	public Customer getCustomer() {
-		return customer;
-	}
-
-	public void setCustomer(Customer customer) {
-		this.customer = customer;
-	}
+	
 
 	public LocalDateTime getDate() {
 		return date;
@@ -80,6 +76,14 @@ public class Transaction {
 	public void setDate(LocalDateTime date) {
 		this.date = date;
 	}
+
+	public void setCustomer(Customer customer) {
+	    this.customer = customer;
+	}
+
+	
+
+	
 
 	
 
