@@ -17,12 +17,18 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Represents a customer in the reward system.
+ * A customer can make transactions and earn reward points.
+ */
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Entity
 @Table(name="customer_master")
 public class Customer {
+	
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -84,6 +90,38 @@ public class Customer {
 		this.totalSpent = totalSpent;
 	}
 
+	public List<Transaction> getTransaction() {
+		return transaction;
+	}
+
+
+
+	public void setTransaction(List<Transaction> transaction) {
+		this.transaction = transaction;
+	}
+
+
+
+	public void setCustomerId(Long customerId) {
+		this.customerId = customerId;
+	}
+
+
+
+	public void setCustName(String custName) {
+		this.custName = custName;
+	}
+
+
+
+	public void setCustMobile(String string) {
+		this.custMobile=custMobile;
+		
+	}
+
+
+
+	
 	
 
 

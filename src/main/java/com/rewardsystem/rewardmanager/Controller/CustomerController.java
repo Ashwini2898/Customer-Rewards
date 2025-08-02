@@ -23,6 +23,10 @@ import com.rewardsystem.rewardmanager.Service.CustomerServiceImpl;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * REST Controller to handle customer-related endpoints.
+ */
+
 @RestController
 @RequestMapping("/api/customers/")
 @Slf4j

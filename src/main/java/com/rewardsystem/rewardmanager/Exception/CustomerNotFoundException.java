@@ -1,5 +1,10 @@
 package com.rewardsystem.rewardmanager.Exception;
 
+/**
+ * Custom exception to be thrown when a resource (e.g., Customer)is not found.
+ */
+
+
 public class CustomerNotFoundException extends Exception{
 	
 	private String message;

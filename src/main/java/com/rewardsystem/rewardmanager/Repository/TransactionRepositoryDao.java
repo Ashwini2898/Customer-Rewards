@@ -8,6 +8,12 @@ import org.springframework.stereotype.Repository;
 
 import com.rewardsystem.rewardmanager.Entity.Transaction;
 
+/**
+ * This interface extends JpaRepository, providing basic CRUD operations for managing transactions
+ * 
+ *
+ */
+
 @Repository
 public interface TransactionRepositoryDao extends JpaRepository<Transaction,Long>{
 	

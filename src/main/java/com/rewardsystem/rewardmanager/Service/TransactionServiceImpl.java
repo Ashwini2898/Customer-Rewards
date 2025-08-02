@@ -5,16 +5,22 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import com.rewardsystem.rewardmanager.Entity.Customer;
 import com.rewardsystem.rewardmanager.Entity.Transaction;
-
+import com.rewardsystem.rewardmanager.Exception.InvalidTransactionException;
 import com.rewardsystem.rewardmanager.Repository.CustomerRepositoryDao;
 import com.rewardsystem.rewardmanager.Repository.TransactionRepositoryDao;
 
 import jakarta.transaction.Transactional;
+
+/**
+ * 
+ * This is a Service class which contains business logic for Transaction entity to perform operations
+ *
+ */
 
 @Service
 public class TransactionServiceImpl {
@@ -24,12 +30,10 @@ public class TransactionServiceImpl {
 	@Autowired
 	private  TransactionRepositoryDao transactionRepository;
 
+	/**
+	 * method to calculate Points for total expenditure
+	 */
 
-	public TransactionServiceImpl(CustomerRepositoryDao customerDao,
-			TransactionRepositoryDao transactionRepository) {
-		this.customerDao = customerDao;
-		this.transactionRepository = transactionRepository;
-	}
 	private int calculatePoints(double amount) {
 		int points = 0;
 
@@ -43,61 +47,67 @@ public class TransactionServiceImpl {
 		return points;
 	}
 
+	/**
+	 * method to create Transaction to maintain transaction list
+	 */
+
 	@Transactional
-	public Transaction createTransaction(Long customerId, double amount) {
-		Customer customer = customerDao.findById(customerId)
-				.orElseThrow(() -> new RuntimeException("Customer not found"));
+	public Transaction createTransaction(Long customerId, double amount) throws InvalidTransactionException{
+		try {
+			Customer customer = customerDao.findById(customerId)
+					.orElseThrow(() -> new RuntimeException("Customer not found"));
 
-		Integer points = calculatePoints(amount); 
+			Integer points = calculatePoints(amount); 
 
-		Transaction txn = new Transaction();
-		txn.setCustomer(customer);
-		txn.setAmountSpent(amount);
-		txn.setAwardedPoints(points);
-		txn.setDate(LocalDateTime.now());
+			Transaction txn = new Transaction();
+			txn.setCustomer(customer);
+			txn.setAmountSpent(amount);
+			txn.setAwardedPoints(points);
+			txn.setDate(LocalDateTime.now());
 
-		transactionRepository.save(txn);
+			transactionRepository.save(txn);
 
-		Integer current = customer.getRewardPoints() == null ? 0 : customer.getRewardPoints();
-        Double totalSpent=customer.getTotalSpent()== null ? 0 : customer.getTotalSpent();
-		customer.setRewardPoints(current + points);
-		customer.setTotalSpent(totalSpent+amount);
-		
-		customerDao.save(customer);  
+			Integer current = customer.getRewardPoints() == null ? 0 : customer.getRewardPoints();
+			Double totalSpent=customer.getTotalSpent()== null ? 0 : customer.getTotalSpent();
+			customer.setRewardPoints(current + points);
+			customer.setTotalSpent(totalSpent+amount);
 
-		return txn;
+			customerDao.save(customer);  
+
+			return txn;
+		}
+		catch(DataAccessException dataAccessException) 
+		{
+			throw new InvalidTransactionException(dataAccessException.getMessage());
+		}
+		catch(Exception exception)
+		{
+			throw new InvalidTransactionException(exception.getMessage());
+		}
+	}
+
+	/**
+	 * method to get total points of a customer
+	 */
+	public Integer getCustomerPoints(Long customerId) throws InvalidTransactionException {
+		try {
+			Customer customer = customerDao.findById(customerId)
+					.orElseThrow(() -> new RuntimeException("Customer not found"));
+			return customer.getRewardPoints() != null ? customer.getRewardPoints() : 0;
+		}
+		catch(DataAccessException dataAccessException) 
+		{
+			throw new InvalidTransactionException(dataAccessException.getMessage());
+		}
+		catch(Exception exception)
+		{
+			throw new InvalidTransactionException(exception.getMessage());
+		}
 	}
 
 
-	public Integer getCustomerPoints(Long customerId) {
-		Customer customer = customerDao.findById(customerId)
-				.orElseThrow(() -> new RuntimeException("Customer not found"));
-		return customer.getRewardPoints() != null ? customer.getRewardPoints() : 0;
-	}
 	
-	public List<Transaction> getTransactionsForMonth(int year, int month) {
-	    LocalDateTime start = LocalDateTime.of(year, month, 1, 0, 0);
-	    LocalDateTime end = start.withDayOfMonth(start.toLocalDate().lengthOfMonth()).withHour(23).withMinute(59).withSecond(59);
 
-	    return transactionRepository.findAllByDateBetween(start, end);
-	}
-	
-	 public List<Transaction> getTransactionsForCustomerLastThreeMonths(Long customerId) {
-	        LocalDateTime now = LocalDateTime.now();
-	        LocalDateTime start = now.minusMonths(3).withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
-	        LocalDateTime end = now;
-
-	        return transactionRepository.findAllByCustomer_CustomerIdAndDateBetween(customerId, start, end);
-	    }
-	 
-	 public List<Transaction> getTransactionsForCustomerLastOneMonth(Long customerId) {
-	        LocalDateTime now = LocalDateTime.now();
-	        LocalDateTime start = now.minusMonths(1).withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
-	        LocalDateTime end = now;
-
-	        return transactionRepository.findAllByCustomer_CustomerIdAndDateBetween(customerId, start, end);
-	    }
-	
 }
 
 
