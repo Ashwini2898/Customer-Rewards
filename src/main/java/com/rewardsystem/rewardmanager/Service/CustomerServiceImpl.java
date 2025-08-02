@@ -15,20 +15,26 @@ import com.rewardsystem.rewardmanager.Exception.InvalidTransactionException;
 import com.rewardsystem.rewardmanager.Repository.CustomerRepositoryDao;
 import com.rewardsystem.rewardmanager.Repository.TransactionRepositoryDao;
 
+/**
+ * 
+ * This is a Service class which contains business logic for customer entity to perform operations
+ *
+ */
+
 @Service
 public class CustomerServiceImpl {
-	
+
 	@Autowired
 	CustomerRepositoryDao customerDao;
-	
+
 	@Autowired
 	TransactionRepositoryDao transactionRepository;
-	
-	//calling addCustomer method of DAO layer
-		/**
-		 * add customer
-		 */
-	
+
+
+	/**
+	 * calling addCustomer method of DAO layer
+	 */
+
 	public Customer addCustomer(Customer customer) throws CustomerNotFoundException 
 	{
 		try 
@@ -49,11 +55,11 @@ public class CustomerServiceImpl {
 
 
 
-	//calling getCustomerById method of DAO layer
+
 	/**
-	 * getCustomerById
+	 * calling getCustomerById method of DAO layer
 	 */
-	
+
 	public Customer getCustomerById(Long customerId) throws CustomerNotFoundException 
 	{
 		try
@@ -65,7 +71,7 @@ public class CustomerServiceImpl {
 			}
 			else
 			{
-				return null;
+				throw new CustomerNotFoundException("Customer not found with ID: " + customerId);
 			}
 		}
 		catch(DataAccessException dataAccessException) 
@@ -79,11 +85,11 @@ public class CustomerServiceImpl {
 	}
 
 
-	//calling deleteCustomer method of DAO layer
+
 	/**
-	 * deleteCustomer
+	 * calling deleteCustomer method of DAO layer
 	 */
-	
+
 	public Long deleteCustomer(Long customerId) throws CustomerNotFoundException 
 	{
 		try 
@@ -103,11 +109,11 @@ public class CustomerServiceImpl {
 
 
 
-	//calling getAllCustomer method of DAO layer
+
 	/**
-	 * getAllCustomer
+	 * calling getAllCustomer method of DAO layer
 	 */
-	
+
 	public List<Customer> getAllCustomer() throws CustomerNotFoundException
 	{
 		try 
@@ -127,11 +133,11 @@ public class CustomerServiceImpl {
 
 
 
-	//calling updateCustomer method of DAO layer
-	/**
-	 * updateCustomer
-	 */
 	
+	/**
+	 * calling updateCustomer method of DAO layer
+	 */
+
 	public Customer updateCustomer(Customer customer) throws CustomerNotFoundException 
 	{
 		try 
@@ -149,15 +155,19 @@ public class CustomerServiceImpl {
 		}
 	}
 	
+	/**
+	 * calling getTransactionsForMonth method of DAO layer to get all transactions done in month
+	 */
+	
 	public List<Transaction> getTransactionsForMonth(int year, int month)  throws InvalidTransactionException{
-		
-		try {
-        LocalDateTime start = LocalDateTime.of(year, month, 1, 0, 0);
-        LocalDateTime end = start.withDayOfMonth(start.toLocalDate().lengthOfMonth())
-                                 .withHour(23).withMinute(59).withSecond(59);
 
-        return transactionRepository.findAllByDateBetween(start, end);
-    }
+		try {
+			LocalDateTime start = LocalDateTime.of(year, month, 1, 0, 0);
+			LocalDateTime end = start.withDayOfMonth(start.toLocalDate().lengthOfMonth())
+					.withHour(23).withMinute(59).withSecond(59);
+
+			return transactionRepository.findAllByDateBetween(start, end);
+		}
 		catch(DataAccessException dataAccessException) 
 		{
 			throw new InvalidTransactionException(dataAccessException.getMessage());
@@ -168,13 +178,16 @@ public class CustomerServiceImpl {
 		}
 	}
 	
-	
+	/**
+	 * calling getTransactionsForLastThreeMonths method of DAO layer to get all transactions done in last three months
+	 */
+
 	public List<Transaction> getTransactionsForLastThreeMonths() throws InvalidTransactionException{
 		try {
-	    LocalDateTime end = LocalDateTime.now();
-	    LocalDateTime start = end.minusMonths(3).withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
+			LocalDateTime end = LocalDateTime.now();
+			LocalDateTime start = end.minusMonths(3).withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
 
-	    return transactionRepository.findAllByDateBetween(start, end);
+			return transactionRepository.findAllByDateBetween(start, end);
 		}
 		catch(DataAccessException dataAccessException) 
 		{
@@ -185,13 +198,17 @@ public class CustomerServiceImpl {
 			throw new InvalidTransactionException(exception.getMessage());
 		}
 	}
+
+	/**
+	 * calling getTransactionsForLastThreeMonths method of DAO layer to get all transactions done in last three months by Customer ID
+	 */
 	
 	public List<Transaction> getCustomerTransactionsForLastThreeMonths(Long customerId) throws InvalidTransactionException{
 		try {
-	    LocalDateTime end = LocalDateTime.now();
-	    LocalDateTime start = end.minusMonths(3).withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
+			LocalDateTime end = LocalDateTime.now();
+			LocalDateTime start = end.minusMonths(3).withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
 
-	    return transactionRepository.findAllByCustomer_CustomerIdAndDateBetween(customerId, start, end);
+			return transactionRepository.findAllByCustomer_CustomerIdAndDateBetween(customerId, start, end);
 		}
 		catch(DataAccessException dataAccessException) 
 		{
@@ -203,12 +220,15 @@ public class CustomerServiceImpl {
 		}
 	}
 	
+	/**
+	 * calling getTransactionsForLastThreeMonths method of DAO layer to get all transactions done in last one months by Customer ID
+	 */
 	public List<Transaction> getCustomerTransactionsForLastOneMonth(Long customerId) throws InvalidTransactionException{
 		try {
-	    LocalDateTime end = LocalDateTime.now();
-	    LocalDateTime start = end.minusMonths(1).withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
+			LocalDateTime end = LocalDateTime.now();
+			LocalDateTime start = end.minusMonths(1).withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
 
-	    return transactionRepository.findAllByCustomer_CustomerIdAndDateBetween(customerId, start, end);
+			return transactionRepository.findAllByCustomer_CustomerIdAndDateBetween(customerId, start, end);
 		}
 		catch(DataAccessException dataAccessException) 
 		{

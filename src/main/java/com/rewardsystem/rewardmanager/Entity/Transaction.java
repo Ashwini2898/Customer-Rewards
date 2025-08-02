@@ -11,11 +11,15 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
+
+
+/**
+ * Represents a Transaction in the reward system.
+ * This class can keep record of all transactions done by a customer and award points for each transactions.
+ */
 
 @AllArgsConstructor
 @NoArgsConstructor
