@@ -21,7 +21,6 @@ import jakarta.transaction.Transactional;
  * This is a Service class which contains business logic for Transaction entity to perform operations
  *
  */
-
 @Service
 public class TransactionServiceImpl {
 
@@ -33,7 +32,6 @@ public class TransactionServiceImpl {
 	/**
 	 * method to calculate Points for total expenditure
 	 */
-
 	private int calculatePoints(double amount) {
 		int points = 0;
 
@@ -50,7 +48,6 @@ public class TransactionServiceImpl {
 	/**
 	 * method to create Transaction to maintain transaction list
 	 */
-
 	@Transactional
 	public Transaction createTransaction(Long customerId, double amount) throws InvalidTransactionException{
 		try {
@@ -104,10 +101,4 @@ public class TransactionServiceImpl {
 			throw new InvalidTransactionException(exception.getMessage());
 		}
 	}
-
-
-	
-
 }
-
-

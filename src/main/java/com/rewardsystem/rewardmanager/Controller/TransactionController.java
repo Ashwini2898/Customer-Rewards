@@ -1,3 +1,5 @@
+
+
 package com.rewardsystem.rewardmanager.Controller;
 
 
@@ -26,7 +28,6 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * REST Controller to handle transaction related endpoints.
  */
-
 @RestController
 @RequestMapping("/api/transactions/")
 @Slf4j
@@ -40,17 +41,17 @@ public class TransactionController {
 
 	private static final Logger logger = LoggerFactory.getLogger(TransactionController.class);
 
-/**
- * get all transactions
- * @param customerId
- * @param amount
- * @return
- */
-	@PostMapping("/transactions/")
+	/**
+	 * get all transactions
+	 * @param customerId
+	 * @param amount
+	 * @return
+	 */
+	@PostMapping("/new-transaction/")
 	public String createTransaction(@RequestParam Long customerId, @RequestParam double amount) 
 	{
 		try {
-		Transaction transaction;
+			Transaction transaction;
 			transaction = transactionService.createTransaction(customerId, amount);
 			logger.info("Transaction added: " +transaction);
 			return "Traction added successfully of " +amount +"$" ;
@@ -60,20 +61,20 @@ public class TransactionController {
 			logger.error(invalidTransactionException.getMessage());
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST,invalidTransactionException.getMessage());
 		}
-		
+
 	}
 
-/**
- * get points for a  customer
- * @param customerId
- * @return
- */
+	/**
+	 * get points for a  customer
+	 * @param customerId
+	 * @return
+	 */
 	@GetMapping("/customers/{customerId}/points/")
 	public String getCustomerPoints(@PathVariable Long customerId)  {
 		try {
-		Integer points= transactionService.getCustomerPoints(customerId);
-		logger.info("Points added fot customer id "+customerId+" are: " +points);
-		return "total poits are: "+points;
+			Integer points= transactionService.getCustomerPoints(customerId);
+			logger.info("Points added fot customer id "+customerId+" are: " +points);
+			return "total poits are: "+points;
 		}
 		catch(InvalidTransactionException invalidTransactionException) 
 		{
@@ -88,7 +89,7 @@ public class TransactionController {
 	 * @param month
 	 * @return
 	 */
-	@GetMapping("/transactions/month")
+	@GetMapping("/month")
 	public ResponseEntity<List<Transaction>> getMonthlyTransactions(@RequestParam int year,@RequestParam int month)  {
 		try {
 			List<Transaction> transactions = customerService.getTransactionsForMonth(year, month);
@@ -101,14 +102,14 @@ public class TransactionController {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST,invalidTransactionException.getMessage());
 		}
 	}
+
 	/**
 	 * get all transactions by for last three months 
 	 * @param year
 	 * @param month
 	 * @return
 	 */
-
-	@GetMapping("/transactions/last-three-months")
+	@GetMapping("/last-three-months")
 	public ResponseEntity<List<Transaction>> getAllTransactionsForLastThreeMonths() {
 		try {
 			logger.info("Returning all Transactions for last three months of all customers");
@@ -126,7 +127,7 @@ public class TransactionController {
 	 * @param id
 	 * @return
 	 */
-	@GetMapping("/customers/{id}/transactions/last-three-months")
+	@GetMapping("/customers/{id}/last-three-months")
 	public ResponseEntity<List<Transaction>> getCustomerTransactionsForLastThreeMonths(@PathVariable Long id) {
 		try {
 			logger.info("Returning all transaction for last three months of customer by its ID");
@@ -138,13 +139,13 @@ public class TransactionController {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST,invalidTransactionException.getMessage());
 		}
 	}
+
 	/**
 	 * get transactions for last one months for a customer
 	 * @param id
 	 * @return
 	 */
-
-	@GetMapping("/customers/{id}/transactions/last-one-months")
+	@GetMapping("/customers/{id}/last-one-months")
 	public ResponseEntity<List<Transaction>> getCustomerTransactionsForLastOneMonth(@PathVariable Long id) {
 		try {
 			logger.info("Returning all transaction for last one month of customer by its ID");
@@ -156,6 +157,4 @@ public class TransactionController {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST,invalidTransactionException.getMessage());
 		}
 	}
-
-
 }

@@ -15,12 +15,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
 /**
  * Represents a Transaction in the reward system.
  * This class can keep record of all transactions done by a customer and award points for each transactions.
  */
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -32,7 +30,6 @@ public class Transaction {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "transaction_id")
 	private Long transactionId;
-
 	
 	@Column(name = "amount_spent")
     private Double amountSpent;
@@ -47,12 +44,20 @@ public class Transaction {
     @Column(name = "awarded_points")
 	private Integer awardedPoints;
 
-    public Long getTransactionId() {
+	public Long getTransactionId() {
 		return transactionId;
 	}
 
 	public Integer getAwardedPoints() {
 		return awardedPoints;
+	}
+	
+	public LocalDateTime getDate() {
+		return date;
+	}
+	
+	public Double getAmountSpent() {
+		return amountSpent;
 	}
 
 	public void setAwardedPoints(Integer awardedPoints) {
@@ -63,18 +68,8 @@ public class Transaction {
 		this.transactionId = transactionId;
 	}
 
-	public Double getAmountSpent() {
-		return amountSpent;
-	}
-
 	public void setAmountSpent(Double amountSpent) {
 		this.amountSpent = amountSpent;
-	}
-
-	
-
-	public LocalDateTime getDate() {
-		return date;
 	}
 
 	public void setDate(LocalDateTime date) {
@@ -83,15 +78,5 @@ public class Transaction {
 
 	public void setCustomer(Customer customer) {
 	    this.customer = customer;
-	}
-
-	
-
-	
-
-	
-
-	
-
-	
+	}	
 }

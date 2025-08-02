@@ -20,7 +20,6 @@ import com.rewardsystem.rewardmanager.Repository.TransactionRepositoryDao;
  * This is a Service class which contains business logic for customer entity to perform operations
  *
  */
-
 @Service
 public class CustomerServiceImpl {
 
@@ -30,36 +29,24 @@ public class CustomerServiceImpl {
 	@Autowired
 	TransactionRepositoryDao transactionRepository;
 
-
 	/**
 	 * calling addCustomer method of DAO layer
 	 */
-
-	public Customer addCustomer(Customer customer) throws CustomerNotFoundException 
+	public Customer addCustomer( Customer customer) throws CustomerNotFoundException 
 	{
 		try 
 		{
 			customerDao.save(customer);
 			return customer;
 		}
-		catch(DataAccessException dataAccessException) 
-		{
-			throw new CustomerNotFoundException(dataAccessException.getMessage());
-		}
-		catch(Exception exception)
-		{
+		catch(Exception exception) {
 			throw new CustomerNotFoundException(exception.getMessage());
 		}
-
 	}
-
-
-
 
 	/**
 	 * calling getCustomerById method of DAO layer
 	 */
-
 	public Customer getCustomerById(Long customerId) throws CustomerNotFoundException 
 	{
 		try
@@ -74,22 +61,15 @@ public class CustomerServiceImpl {
 				throw new CustomerNotFoundException("Customer not found with ID: " + customerId);
 			}
 		}
-		catch(DataAccessException dataAccessException) 
-		{
-			throw new CustomerNotFoundException(dataAccessException.getMessage());
-		}
 		catch(Exception exception)
 		{
 			throw new CustomerNotFoundException(exception.getMessage());
 		}
 	}
 
-
-
 	/**
 	 * calling deleteCustomer method of DAO layer
 	 */
-
 	public Long deleteCustomer(Long customerId) throws CustomerNotFoundException 
 	{
 		try 
@@ -107,13 +87,9 @@ public class CustomerServiceImpl {
 		}
 	}
 
-
-
-
 	/**
 	 * calling getAllCustomer method of DAO layer
 	 */
-
 	public List<Customer> getAllCustomer() throws CustomerNotFoundException
 	{
 		try 
@@ -131,13 +107,9 @@ public class CustomerServiceImpl {
 		}
 	}
 
-
-
-	
 	/**
 	 * calling updateCustomer method of DAO layer
 	 */
-
 	public Customer updateCustomer(Customer customer) throws CustomerNotFoundException 
 	{
 		try 
@@ -154,11 +126,10 @@ public class CustomerServiceImpl {
 			throw new CustomerNotFoundException(exception.getMessage());
 		}
 	}
-	
+
 	/**
 	 * calling getTransactionsForMonth method of DAO layer to get all transactions done in month
 	 */
-	
 	public List<Transaction> getTransactionsForMonth(int year, int month)  throws InvalidTransactionException{
 
 		try {
@@ -177,11 +148,10 @@ public class CustomerServiceImpl {
 			throw new InvalidTransactionException(exception.getMessage());
 		}
 	}
-	
+
 	/**
 	 * calling getTransactionsForLastThreeMonths method of DAO layer to get all transactions done in last three months
 	 */
-
 	public List<Transaction> getTransactionsForLastThreeMonths() throws InvalidTransactionException{
 		try {
 			LocalDateTime end = LocalDateTime.now();
@@ -202,7 +172,6 @@ public class CustomerServiceImpl {
 	/**
 	 * calling getTransactionsForLastThreeMonths method of DAO layer to get all transactions done in last three months by Customer ID
 	 */
-	
 	public List<Transaction> getCustomerTransactionsForLastThreeMonths(Long customerId) throws InvalidTransactionException{
 		try {
 			LocalDateTime end = LocalDateTime.now();
@@ -219,7 +188,7 @@ public class CustomerServiceImpl {
 			throw new InvalidTransactionException(exception.getMessage());
 		}
 	}
-	
+
 	/**
 	 * calling getTransactionsForLastThreeMonths method of DAO layer to get all transactions done in last one months by Customer ID
 	 */
