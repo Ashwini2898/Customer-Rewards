@@ -92,7 +92,7 @@ public class Customer {
 		this.custName = custName;
 	}
 
-	public void setCustMobile(String string) {
+	public void setCustMobile(String custMobile) {
 		this.custMobile=custMobile;
 
 	}
