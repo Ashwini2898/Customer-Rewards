@@ -67,9 +67,9 @@ public class Customer {
 		return custMobile;
 	}
 
-	public List<Transaction> getTransaction() {
-		return transaction;
-	}
+//	public List<Transaction> getTransaction() {
+//		return transaction;
+//	}
 
 	public Integer getRewardPoints() {
 		return rewardPoints;
@@ -92,14 +92,12 @@ public class Customer {
 		this.custName = custName;
 	}
 
-	public void setCustMobile(String string) {
+	public void setCustMobile(String custMobile) {
 		this.custMobile=custMobile;
 
 	}
 
-	public void setTransaction(List<Transaction> transaction) {
-		this.transaction = transaction;
-	}
+
 
 	public void setRewardPoints(Integer rewardPoints) {
 		this.rewardPoints = rewardPoints;

@@ -92,8 +92,8 @@ public class CustomerController {
 		{
 			Customer newCustomer= customerService.addCustomer(customer);
 
-			logger.info("customer:"+customer.getCustName()+" added to database");
-			return "customer:"+customer.getCustName()+" added to database";
+			logger.info("customer:"+newCustomer.getCustName()+" added to database");
+			return "customer:"+newCustomer.getCustName()+" added to database";
 
 		}
 		catch(CustomerNotFoundException customerException)
@@ -125,9 +125,6 @@ public class CustomerController {
 				logger.debug("Unable to delete customer from database");
 				return "Unable to delete customer from database";
 			}
-
-
-
 		}
 		catch(CustomerNotFoundException customerException)
 		{
