@@ -1,13 +1,14 @@
 
+package com.rewardsystem.rewardmanager.rewardController;
 
-package com.rewardsystem.rewardmanager.Controller;
-
-
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,10 +19,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.rewardsystem.rewardmanager.Entity.Transaction;
-import com.rewardsystem.rewardmanager.Exception.InvalidTransactionException;
-import com.rewardsystem.rewardmanager.Service.CustomerServiceImpl;
-import com.rewardsystem.rewardmanager.Service.TransactionServiceImpl;
+import com.rewardsystem.rewardmanager.dto.TransactionDTO;
+import com.rewardsystem.rewardmanager.rewardException.InvalidTransactionException;
+import com.rewardsystem.rewardmanager.rewardService.TransactionServiceImpl;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -36,9 +36,6 @@ public class TransactionController {
 	@Autowired
 	private TransactionServiceImpl transactionService;
 
-	@Autowired
-	CustomerServiceImpl customerService;
-
 	private static final Logger logger = LoggerFactory.getLogger(TransactionController.class);
 
 	/**
@@ -48,13 +45,12 @@ public class TransactionController {
 	 * @return
 	 */
 	@PostMapping("/new-transaction/")
-	public String createTransaction(@RequestParam Long customerId, @RequestParam double amount) 
+	public ResponseEntity<TransactionDTO> createTransaction(@RequestParam Long customerId, @RequestParam double amount) 
 	{
 		try {
-			Transaction transaction;
-			transaction = transactionService.createTransaction(customerId, amount);
-			logger.info("Transaction added: " +transaction);
-			return "Traction added successfully of " +amount +"$" ;
+			TransactionDTO transactionDTO = transactionService.createTransaction(customerId, amount);
+			logger.info("Transaction added: {}", transactionDTO);
+			return new ResponseEntity<>(transactionDTO, HttpStatus.CREATED);
 		} 
 		catch(InvalidTransactionException invalidTransactionException) 
 		{
@@ -84,36 +80,14 @@ public class TransactionController {
 	}
 
 	/**
-	 * get all transactions by year and month 
-	 * @param year
-	 * @param month
+	 * 
 	 * @return
 	 */
-	@GetMapping("/month")
-	public ResponseEntity<List<Transaction>> getMonthlyTransactions(@RequestParam int year,@RequestParam int month)  {
-		try {
-			List<Transaction> transactions = customerService.getTransactionsForMonth(year, month);
-			logger.info("Returning all transaction for last one month of all customers");
-			return ResponseEntity.ok(transactions);
-		}
-		catch(InvalidTransactionException invalidTransactionException) 
-		{
-			logger.error(invalidTransactionException.getMessage());
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST,invalidTransactionException.getMessage());
-		}
-	}
-
-	/**
-	 * get all transactions by for last three months 
-	 * @param year
-	 * @param month
-	 * @return
-	 */
-	@GetMapping("/last-three-months")
-	public ResponseEntity<List<Transaction>> getAllTransactionsForLastThreeMonths() {
+	@GetMapping("/getAllTransactions")
+	public ResponseEntity<List<TransactionDTO>> getAllTransactions() {
 		try {
 			logger.info("Returning all Transactions for last three months of all customers");
-			return ResponseEntity.ok(customerService.getTransactionsForLastThreeMonths());
+			return ResponseEntity.ok(transactionService.getAllTransactions());
 		} 
 		catch(InvalidTransactionException invalidTransactionException) 
 		{
@@ -123,38 +97,45 @@ public class TransactionController {
 	}
 
 	/**
-	 * get transactions for last three months for a customer
+	 * 
 	 * @param id
+	 * @param fromDate
+	 * @param toDate
 	 * @return
 	 */
-	@GetMapping("/customers/{id}/last-three-months")
-	public ResponseEntity<List<Transaction>> getCustomerTransactionsForLastThreeMonths(@PathVariable Long id) {
+	@GetMapping("/customers/{id}/getTransactionByCustomerID")
+	public ResponseEntity<List<TransactionDTO>> getCustomerTransactions(@PathVariable Long id, 
+			@RequestParam  @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate fromDate ,
+			@RequestParam  @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate toDate ) {
 		try {
+			if (fromDate != null && toDate != null && toDate.isBefore(fromDate)) {
+				throw new ResponseStatusException(
+						HttpStatus.BAD_REQUEST,
+						"'toDate' should not be earlier than 'fromDate'"
+						);
+			}
+			LocalDateTime start = fromDate.atStartOfDay();
+			LocalDateTime end = toDate.atTime(23, 59, 59);
 			logger.info("Returning all transaction for last three months of customer by its ID");
-			return ResponseEntity.ok(customerService.getCustomerTransactionsForLastThreeMonths(id));
-		} 
-		catch(InvalidTransactionException invalidTransactionException) 
-		{
-			logger.error(invalidTransactionException.getMessage());
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST,invalidTransactionException.getMessage());
-		}
-	}
+			return ResponseEntity.ok(transactionService.getCustomerTransactions(id, start, end));
 
-	/**
-	 * get transactions for last one months for a customer
-	 * @param id
-	 * @return
-	 */
-	@GetMapping("/customers/{id}/last-one-months")
-	public ResponseEntity<List<Transaction>> getCustomerTransactionsForLastOneMonth(@PathVariable Long id) {
-		try {
-			logger.info("Returning all transaction for last one month of customer by its ID");
-			return ResponseEntity.ok(customerService.getCustomerTransactionsForLastOneMonth(id));
 		} 
 		catch(InvalidTransactionException invalidTransactionException) 
 		{
 			logger.error(invalidTransactionException.getMessage());
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST,invalidTransactionException.getMessage());
 		}
+	}	
+
+	@GetMapping("/customers/{id}/getAllTransactionForCustomer")
+	public ResponseEntity<List<TransactionDTO>> getCustomerAllTransactions(@PathVariable Long id){
+		try {
+			logger.info("Fetching all transactions for customer ID: {}", id);
+			return ResponseEntity.ok(transactionService.getAllTransactionsByCustomerId(id));
+		} catch (InvalidTransactionException e) {
+			logger.error(e.getMessage());
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}
+
 	}
 }

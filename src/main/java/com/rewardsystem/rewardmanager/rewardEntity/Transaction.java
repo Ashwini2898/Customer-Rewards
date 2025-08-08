@@ -1,6 +1,8 @@
-package com.rewardsystem.rewardmanager.Entity;
+package com.rewardsystem.rewardmanager.rewardEntity;
 
 import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -34,7 +36,7 @@ public class Transaction {
 	@Column(name = "amount_spent")
     private Double amountSpent;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "customer_id",nullable = false)
 	private Customer customer;
     
@@ -59,6 +61,11 @@ public class Transaction {
 	public Double getAmountSpent() {
 		return amountSpent;
 	}
+	
+	@JsonProperty("customerId")
+	public Long getCustomerId() {
+	    return customer != null ? customer.getCustomerId() : null;
+	}	
 
 	public void setAwardedPoints(Integer awardedPoints) {
 		this.awardedPoints = awardedPoints;

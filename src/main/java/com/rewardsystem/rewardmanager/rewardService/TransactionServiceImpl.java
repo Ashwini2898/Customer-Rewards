@@ -1,6 +1,7 @@
-package com.rewardsystem.rewardmanager.Service;
+package com.rewardsystem.rewardmanager.rewardService;
 
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -8,11 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
-import com.rewardsystem.rewardmanager.Entity.Customer;
-import com.rewardsystem.rewardmanager.Entity.Transaction;
-import com.rewardsystem.rewardmanager.Exception.InvalidTransactionException;
-import com.rewardsystem.rewardmanager.Repository.CustomerRepositoryDao;
-import com.rewardsystem.rewardmanager.Repository.TransactionRepositoryDao;
+import com.rewardsystem.rewardmanager.dto.TransactionDTO;
+import com.rewardsystem.rewardmanager.mapper.TransactionMapper;
+import com.rewardsystem.rewardmanager.rewardEntity.Customer;
+import com.rewardsystem.rewardmanager.rewardEntity.Transaction;
+import com.rewardsystem.rewardmanager.rewardException.InvalidTransactionException;
+import com.rewardsystem.rewardmanager.rewardRepository.CustomerRepositoryDao;
+import com.rewardsystem.rewardmanager.rewardRepository.TransactionRepositoryDao;
 
 import jakarta.transaction.Transactional;
 
@@ -26,9 +29,12 @@ public class TransactionServiceImpl {
 
 	@Autowired
 	private  CustomerRepositoryDao customerDao;
+	
 	@Autowired
 	private  TransactionRepositoryDao transactionRepository;
-
+	
+	@Autowired
+    private TransactionMapper transactionMapper;
 	/**
 	 * method to calculate Points for total expenditure
 	 */
@@ -49,7 +55,7 @@ public class TransactionServiceImpl {
 	 * method to create Transaction to maintain transaction list
 	 */
 	@Transactional
-	public Transaction createTransaction(Long customerId, double amount) throws InvalidTransactionException{
+	public TransactionDTO createTransaction(Long customerId, double amount) throws InvalidTransactionException{
 		try {
 			Customer customer = customerDao.findById(customerId)
 					.orElseThrow(() -> new RuntimeException("Customer not found"));
@@ -71,11 +77,7 @@ public class TransactionServiceImpl {
 
 			customerDao.save(customer);  
 
-			return txn;
-		}
-		catch(DataAccessException dataAccessException) 
-		{
-			throw new InvalidTransactionException(dataAccessException.getMessage());
+			return transactionMapper.toDTO(txn);
 		}
 		catch(Exception exception)
 		{
@@ -92,9 +94,48 @@ public class TransactionServiceImpl {
 					.orElseThrow(() -> new RuntimeException("Customer not found"));
 			return customer.getRewardPoints() != null ? customer.getRewardPoints() : 0;
 		}
-		catch(DataAccessException dataAccessException) 
+		catch(Exception exception)
 		{
-			throw new InvalidTransactionException(dataAccessException.getMessage());
+			throw new InvalidTransactionException(exception.getMessage());
+		}
+	}
+
+	/**
+	 * calling getTransactionsAllTransaction method of DAO layer to get all transactions 
+	 */
+	public List<TransactionDTO> getAllTransactions() throws InvalidTransactionException{
+		try {
+
+			List<Transaction> transactions = transactionRepository.findAll();
+            return transactionMapper.toDTO(transactions);
+		}
+		catch(Exception exception)
+		{
+			throw new InvalidTransactionException(exception.getMessage());
+		}
+	}
+
+	/**
+	 * calling getTransactionsForLastThreeMonths method of DAO layer to get all transactions between two dates given by Customer ID
+	 */
+	public List<TransactionDTO> getCustomerTransactions(Long customerId, LocalDateTime fromDate, LocalDateTime toDate) throws InvalidTransactionException{
+		try {			
+			
+			List<Transaction> transactions = transactionRepository
+	                .findAllByCustomer_CustomerIdAndDateBetween(customerId, fromDate, toDate);
+	            return transactionMapper.toDTO(transactions);
+		}
+		catch(Exception exception)
+		{
+			throw new InvalidTransactionException(exception.getMessage());
+		}
+	}
+
+	public List<TransactionDTO> getAllTransactionsByCustomerId(Long id) throws InvalidTransactionException {
+		// TODO Auto-generated method stub
+		try {			
+			List<Transaction> transactions =transactionRepository.findAllByCustomer_CustomerId(id);
+			return transactionMapper.toDTO(transactions);
 		}
 		catch(Exception exception)
 		{

@@ -1,10 +1,10 @@
-package com.rewardsystem.rewardmanager.Repository;
+package com.rewardsystem.rewardmanager.rewardRepository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import org.springframework.stereotype.Repository;
 
-import com.rewardsystem.rewardmanager.Entity.Customer;
+import com.rewardsystem.rewardmanager.rewardEntity.Customer;
 
 /**
  * This interface extends JpaRepository, providing basic CRUD operations for managing customers
