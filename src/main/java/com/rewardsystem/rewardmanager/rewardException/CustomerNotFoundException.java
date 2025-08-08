@@ -1,4 +1,4 @@
-package com.rewardsystem.rewardmanager.Exception;
+package com.rewardsystem.rewardmanager.rewardException;
 
 /**
  * Custom exception to be thrown when a resource (e.g., Customer)is not found.

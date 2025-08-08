@@ -1,4 +1,4 @@
-package com.rewardsystem.rewardmanager.Entity;
+package com.rewardsystem.rewardmanager.rewardEntity;
 
 import java.util.List;
 
@@ -67,10 +67,6 @@ public class Customer {
 		return custMobile;
 	}
 
-//	public List<Transaction> getTransaction() {
-//		return transaction;
-//	}
-
 	public Integer getRewardPoints() {
 		return rewardPoints;
 	}
@@ -97,9 +93,9 @@ public class Customer {
 
 	}
 
-
-
 	public void setRewardPoints(Integer rewardPoints) {
 		this.rewardPoints = rewardPoints;
 	}
+
+	
 }

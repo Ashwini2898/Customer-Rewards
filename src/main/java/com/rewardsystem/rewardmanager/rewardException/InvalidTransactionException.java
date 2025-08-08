@@ -1,4 +1,4 @@
-package com.rewardsystem.rewardmanager.Exception;
+package com.rewardsystem.rewardmanager.rewardException;
 
 
 /**
