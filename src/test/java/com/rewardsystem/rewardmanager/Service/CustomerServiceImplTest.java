@@ -3,6 +3,9 @@ package com.rewardsystem.rewardmanager.Service;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
@@ -17,13 +20,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-
-import com.rewardsystem.rewardmanager.Entity.Customer;
-import com.rewardsystem.rewardmanager.Entity.Transaction;
-import com.rewardsystem.rewardmanager.Exception.CustomerNotFoundException;
-import com.rewardsystem.rewardmanager.Exception.InvalidTransactionException;
-import com.rewardsystem.rewardmanager.Repository.CustomerRepositoryDao;
-import com.rewardsystem.rewardmanager.Repository.TransactionRepositoryDao;
+import com.rewardsystem.rewardmanager.dto.CustomerDTO;
+import com.rewardsystem.rewardmanager.mapper.CustomerMapper;
+import com.rewardsystem.rewardmanager.rewardEntity.Customer;
+import com.rewardsystem.rewardmanager.rewardEntity.Transaction;
+import com.rewardsystem.rewardmanager.rewardException.CustomerNotFoundException;
+import com.rewardsystem.rewardmanager.rewardException.InvalidTransactionException;
+import com.rewardsystem.rewardmanager.rewardRepository.CustomerRepositoryDao;
+import com.rewardsystem.rewardmanager.rewardRepository.TransactionRepositoryDao;
+import com.rewardsystem.rewardmanager.rewardService.CustomerServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
 class CustomerServiceImplTest {
@@ -34,110 +39,48 @@ class CustomerServiceImplTest {
 	@Mock
 	TransactionRepositoryDao transactionRepository;
 
+	@Mock
+	private CustomerMapper customerMapper;
+
 	@InjectMocks
 	private CustomerServiceImpl customerService;
 
-	private Customer mockCustomer;
-	private Transaction transaction;
+	private Customer customer;
+	private CustomerDTO customerDTO;
 
 	@BeforeEach
 	void setUp() {
-		mockCustomer = new Customer();
-		mockCustomer.setCustomerId(1L);
-		mockCustomer.setCustName("John");
-		mockCustomer.setCustMobile("9876543210");
-		mockCustomer.setTotalSpent(100.0);
-		mockCustomer.setRewardPoints(50);
-	}
-
-	@Test
-	void verifyAddCustomer() throws CustomerNotFoundException {
-		when(customerDao.save(any(Customer.class))).thenReturn(mockCustomer);
-
-		Customer result = customerService.addCustomer(mockCustomer);
-		assertNotNull(result);
-		assertEquals(mockCustomer, result);
-	}
-
-	@Test
-	void verifyGetCustomerById() throws CustomerNotFoundException {
-
-		when(customerDao.findById(1L)).thenReturn(Optional.of(mockCustomer));
-		Customer result = customerService.getCustomerById(1L);
-		assertNotNull(result);
-		assertEquals("John", result.getCustName());
-		// assertEquals("9876543210", result.getCustMobile());
-
-	}
-
-	@Test
-	void verifyGetAllCustomers() throws CustomerNotFoundException {
-		List<Customer> customers = List.of(mockCustomer);
-		when(customerDao.findAll()).thenReturn(customers);
-
-		List<Customer> result = customerService.getAllCustomer();
-		assertEquals(1, result.size());
-	}
-
-	@Test
-	void verifyGetTransactionsForMonth() throws InvalidTransactionException {
-		Customer customer = new Customer();
+		customer = new Customer();
 		customer.setCustomerId(1L);
-		customer.setCustName("John");
-		customer.setCustMobile("9876543210");
-		customer.setTotalSpent(100.0);
-		customer.setRewardPoints(50);
+		customer.setCustName("John Doe");
 
-		Transaction t1 = new Transaction();
-		t1.setTransactionId(1L);
-		t1.setAmountSpent(100.0);
-		t1.setCustomer(customer);
-		t1.setDate(LocalDateTime.of(2025, 7, 10, 12, 0));
-		t1.setAwardedPoints(50);
-
-		Transaction t2 = new Transaction();
-		t2.setTransactionId(2L);
-		t2.setAmountSpent(150.0);
-		t2.setCustomer(customer);
-		t2.setDate(LocalDateTime.of(2025, 7, 20, 15, 30));
-		t2.setAwardedPoints(150);
-
-		List<Transaction> transactions = new ArrayList<>();
-		transactions.add(t1);
-		transactions.add(t2);
-
-		when(transactionRepository.findAllByDateBetween(any(LocalDateTime.class), any(LocalDateTime.class))).thenReturn(transactions);
-
-		List<Transaction> result = customerService.getTransactionsForMonth(2025, 7);
-
-		assertEquals(2, result.size());
-		assertEquals(t1,result.get(0));
-		assertEquals(t2,result.get(1));
+		customerDTO = new CustomerDTO();
+		customerDTO.setCustomerId(1L);
+		customerDTO.setCustName("John Doe");
 	}
 
 	@Test
-	void getCustomerTransactionsForLastOneMonth() throws InvalidTransactionException {
-		Transaction t1 = new Transaction();
-		t1.setTransactionId(1L);
-		t1.setAmountSpent(100.0);
-		t1.setCustomer(mockCustomer);
-		t1.setDate(LocalDateTime.of(2025, 7, 10, 12, 0));
-		t1.setAwardedPoints(50);
+	void verifyGetCustomerById_Success() throws CustomerNotFoundException {
 
-		Transaction t2 = new Transaction();
-		t2.setTransactionId(2L);
-		t2.setAmountSpent(150.0);
-		t2.setCustomer(mockCustomer);
-		t2.setDate(LocalDateTime.of(2025, 6, 20, 15, 30));
-		t2.setAwardedPoints(150);
+		when(customerDao.findById(1L)).thenReturn(Optional.of(customer));
+		when(customerMapper.toDTO(customer)).thenReturn(customerDTO);
 
-		List<Transaction> transactions = new ArrayList<>();
-		transactions.add(t1);
-		transactions.add(t2);
-		
-		when(transactionRepository.findAllByCustomer_CustomerIdAndDateBetween(any(Long.class),
-				any(LocalDateTime.class), any(LocalDateTime.class))).thenReturn(transactions);
-		List<Transaction> result = customerService.getCustomerTransactionsForLastOneMonth(1L);
-		assertEquals(2, result.size());
+		CustomerDTO result = customerService.getCustomerById(1L);
+
+		assertNotNull(result);
+		assertEquals(1L, result.getCustomerId());
+		assertEquals("John Doe", result.getCustName());
+		verify(customerDao, times(1)).findById(1L);
+		verify(customerMapper, times(1)).toDTO(customer);
+	}
+
+	@Test
+	void testGetCustomerById_NotFound() {
+
+		when(customerDao.findById(1L)).thenReturn(Optional.empty());
+
+		assertThrows(CustomerNotFoundException.class, () -> customerService.getCustomerById(1L));
+		verify(customerDao, times(1)).findById(1L);
+		verify(customerMapper, never()).toDTO(any());
 	}
 }

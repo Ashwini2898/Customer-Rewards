@@ -1,6 +1,5 @@
 package com.rewardsystem.rewardmanager.rewardException;
 
-
 /**
  * Custom exception to be thrown when a resource (e.g. Transaction)is not found.
  */

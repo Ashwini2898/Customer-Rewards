@@ -1,12 +1,9 @@
 package com.rewardsystem.rewardmanager.rewardService;
 
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import com.rewardsystem.rewardmanager.dto.TransactionDTO;
@@ -29,12 +26,12 @@ public class TransactionServiceImpl {
 
 	@Autowired
 	private  CustomerRepositoryDao customerDao;
-	
+
 	@Autowired
 	private  TransactionRepositoryDao transactionRepository;
-	
+
 	@Autowired
-    private TransactionMapper transactionMapper;
+	private TransactionMapper transactionMapper;
 	/**
 	 * method to calculate Points for total expenditure
 	 */
@@ -53,6 +50,10 @@ public class TransactionServiceImpl {
 
 	/**
 	 * method to create Transaction to maintain transaction list
+	 * @param customerId to make transaction to specific customer using id which is unique key
+	 * @param amount refers to transaction amount
+	 * @return 
+	 * @throws InvalidTransactionException
 	 */
 	@Transactional
 	public TransactionDTO createTransaction(Long customerId, double amount) throws InvalidTransactionException{
@@ -86,7 +87,10 @@ public class TransactionServiceImpl {
 	}
 
 	/**
-	 * method to get total points of a customer
+	 * 
+	 * @param customerId to get all points of specific customer
+	 * @return
+	 * @throws InvalidTransactionException
 	 */
 	public Integer getCustomerPoints(Long customerId) throws InvalidTransactionException {
 		try {
@@ -101,13 +105,15 @@ public class TransactionServiceImpl {
 	}
 
 	/**
-	 * calling getTransactionsAllTransaction method of DAO layer to get all transactions 
+	 * getTransactionsAllTransaction method of DAO layer to get all transactions 
+	 * @return list of all transaction
+	 * @throws InvalidTransactionException
 	 */
 	public List<TransactionDTO> getAllTransactions() throws InvalidTransactionException{
 		try {
 
 			List<Transaction> transactions = transactionRepository.findAll();
-            return transactionMapper.toDTO(transactions);
+			return transactionMapper.toDTO(transactions);
 		}
 		catch(Exception exception)
 		{
@@ -116,14 +122,19 @@ public class TransactionServiceImpl {
 	}
 
 	/**
-	 * calling getTransactionsForLastThreeMonths method of DAO layer to get all transactions between two dates given by Customer ID
+	 * 
+	 @param id is customerID to get the transaction between given period of time
+	 * @param fromDate is the start date of the transaction period, in <code>dd-MM-yyyy</code> format
+	 * @param toDate is the end date of the transaction period, in <code>dd-MM-yyyy</code> format
+	 * @return list of transaction within given fromDate and toDate
+	 * @throws InvalidTransactionException
 	 */
 	public List<TransactionDTO> getCustomerTransactions(Long customerId, LocalDateTime fromDate, LocalDateTime toDate) throws InvalidTransactionException{
 		try {			
-			
+
 			List<Transaction> transactions = transactionRepository
-	                .findAllByCustomer_CustomerIdAndDateBetween(customerId, fromDate, toDate);
-	            return transactionMapper.toDTO(transactions);
+					.findAllByCustomer_CustomerIdAndDateBetween(customerId, fromDate, toDate);
+			return transactionMapper.toDTO(transactions);
 		}
 		catch(Exception exception)
 		{
@@ -131,6 +142,12 @@ public class TransactionServiceImpl {
 		}
 	}
 
+	/**
+	 * 
+	 *@param id to get all transaction specific to a customer
+	 * @return list of transaction 
+	 * @throws InvalidTransactionException
+	 */
 	public List<TransactionDTO> getAllTransactionsByCustomerId(Long id) throws InvalidTransactionException {
 		// TODO Auto-generated method stub
 		try {			

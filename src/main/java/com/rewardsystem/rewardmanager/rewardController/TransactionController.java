@@ -40,8 +40,8 @@ public class TransactionController {
 
 	/**
 	 * get all transactions
-	 * @param customerId
-	 * @param amount
+	 * @param customerId is id of customer for whom the transactions are being created
+	 * @param amount 
 	 * @return
 	 */
 	@PostMapping("/new-transaction/")
@@ -62,7 +62,7 @@ public class TransactionController {
 
 	/**
 	 * get points for a  customer
-	 * @param customerId
+	 * @param customerId is id of customer to retrieve all points
 	 * @return
 	 */
 	@GetMapping("/customers/{customerId}/points/")
@@ -80,8 +80,8 @@ public class TransactionController {
 	}
 
 	/**
-	 * 
-	 * @return
+	 * All transaction are returned as a list of transaction
+	 * @return 
 	 */
 	@GetMapping("/getAllTransactions")
 	public ResponseEntity<List<TransactionDTO>> getAllTransactions() {
@@ -98,10 +98,10 @@ public class TransactionController {
 
 	/**
 	 * 
-	 * @param id
-	 * @param fromDate
-	 * @param toDate
-	 * @return
+	 * @param id is customerID to get the transaction between given period of time
+	 * @param fromDate is the start date of the transaction period, in <code>dd-MM-yyyy</code> format
+	 * @param toDate is the end date of the transaction period, in <code>dd-MM-yyyy</code> format
+	 * @return list of transaction within given fromDate and toDate
 	 */
 	@GetMapping("/customers/{id}/getTransactionByCustomerID")
 	public ResponseEntity<List<TransactionDTO>> getCustomerTransactions(@PathVariable Long id, 
@@ -126,7 +126,12 @@ public class TransactionController {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST,invalidTransactionException.getMessage());
 		}
 	}	
-
+	
+	/**
+	 * 
+	 * @param id to get all transaction specific to a customer
+	 * @return list of transaction 
+	 */
 	@GetMapping("/customers/{id}/getAllTransactionForCustomer")
 	public ResponseEntity<List<TransactionDTO>> getCustomerAllTransactions(@PathVariable Long id){
 		try {
