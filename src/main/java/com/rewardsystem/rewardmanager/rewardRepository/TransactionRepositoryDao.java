@@ -17,6 +17,6 @@ import com.rewardsystem.rewardmanager.rewardEntity.Transaction;
 public interface TransactionRepositoryDao extends JpaRepository<Transaction,Long>{
 
 	List<Transaction> findAllByCustomer_CustomerIdAndDateBetween(Long customerId, LocalDateTime start, LocalDateTime end);
-	
+
 	List<Transaction> findAllByCustomer_CustomerId(Long customerId);
 }

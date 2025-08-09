@@ -2,6 +2,10 @@ package com.rewardsystem.rewardmanager.dto;
 
 import java.time.LocalDateTime;
 
+/**
+ *Data Transfer Object (DTO) for transferring transaction data between different layers
+ *
+ */
 public class TransactionDTO {
 	private Long transactionId;
 	private Double amountSpent;
@@ -11,7 +15,8 @@ public class TransactionDTO {
 
 	public TransactionDTO() {}
 
-	public TransactionDTO(Long transactionId, Double amountSpent, Long customerId, LocalDateTime date, Integer awardedPoints) {
+	public TransactionDTO(Long transactionId, Double amountSpent, Long customerId,
+			LocalDateTime date, Integer awardedPoints) {
 		this.transactionId = transactionId;
 		this.amountSpent = amountSpent;
 		this.customerId = customerId;

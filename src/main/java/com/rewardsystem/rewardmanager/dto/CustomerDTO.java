@@ -1,5 +1,9 @@
 package com.rewardsystem.rewardmanager.dto;
 
+/**
+ *Data Transfer Object (DTO) for transferring customer data between different layers
+ *
+ */
 public class CustomerDTO {
 	private Long customerId;
 	private String custName;

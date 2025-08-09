@@ -27,23 +27,23 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name="transaction_manager")
 public class Transaction {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "transaction_id")
+	@Column(name = "transaction_id")
 	private Long transactionId;
-	
+
 	@Column(name = "amount_spent")
-    private Double amountSpent;
+	private Double amountSpent;
 
 	@ManyToOne
 	@JoinColumn(name = "customer_id",nullable = false)
 	private Customer customer;
-    
-    @Column(name="transaction_date",nullable = false)
-    private LocalDateTime date = LocalDateTime.now();
-    
-    @Column(name = "awarded_points")
+
+	@Column(name="transaction_date",nullable = false)
+	private LocalDateTime date = LocalDateTime.now();
+
+	@Column(name = "awarded_points")
 	private Integer awardedPoints;
 
 	public Long getTransactionId() {
@@ -53,18 +53,18 @@ public class Transaction {
 	public Integer getAwardedPoints() {
 		return awardedPoints;
 	}
-	
+
 	public LocalDateTime getDate() {
 		return date;
 	}
-	
+
 	public Double getAmountSpent() {
 		return amountSpent;
 	}
-	
+
 	@JsonProperty("customerId")
 	public Long getCustomerId() {
-	    return customer != null ? customer.getCustomerId() : null;
+		return customer != null ? customer.getCustomerId() : null;
 	}	
 
 	public void setAwardedPoints(Integer awardedPoints) {
@@ -84,6 +84,6 @@ public class Transaction {
 	}
 
 	public void setCustomer(Customer customer) {
-	    this.customer = customer;
+		this.customer = customer;
 	}	
 }

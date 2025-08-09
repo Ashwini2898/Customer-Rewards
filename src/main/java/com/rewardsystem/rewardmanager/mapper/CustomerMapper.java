@@ -5,6 +5,11 @@ import org.springframework.stereotype.Component;
 import com.rewardsystem.rewardmanager.dto.CustomerDTO;
 import com.rewardsystem.rewardmanager.rewardEntity.Customer;
 
+/**
+ * 
+ * Mapper class for converting between Customer Entity and CustomerDTO objects
+ *
+ */
 @Component
 public class CustomerMapper {
 
@@ -15,7 +20,6 @@ public class CustomerMapper {
 		dto.setTotalSpent(customer.getTotalSpent());
 		dto.setCustMobile(customer.getCustMobile());
 		dto.setCustomerId(customer.getCustomerId());
-		// do NOT set customerId if you want to hide it
 		return dto;
 	}
 
