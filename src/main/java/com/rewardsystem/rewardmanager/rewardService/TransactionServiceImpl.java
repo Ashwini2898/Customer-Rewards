@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.rewardsystem.rewardmanager.dto.TransactionDTO;
+import com.rewardsystem.rewardmanager.dto.TransactionSummaryDTO;
 import com.rewardsystem.rewardmanager.mapper.TransactionMapper;
 import com.rewardsystem.rewardmanager.rewardEntity.Customer;
 import com.rewardsystem.rewardmanager.rewardEntity.Transaction;
@@ -129,12 +130,12 @@ public class TransactionServiceImpl {
 	 * @return list of transaction within given fromDate and toDate
 	 * @throws InvalidTransactionException
 	 */
-	public List<TransactionDTO> getCustomerTransactions(Long customerId, LocalDateTime fromDate, LocalDateTime toDate) throws InvalidTransactionException{
+	public List<TransactionSummaryDTO> getCustomerTransactions(Long customerId, LocalDateTime fromDate, LocalDateTime toDate) throws InvalidTransactionException{
 		try {			
 
 			List<Transaction> transactions = transactionRepository
 					.findAllByCustomer_CustomerIdAndDateBetween(customerId, fromDate, toDate);
-			return transactionMapper.toDTO(transactions);
+			return transactionMapper.toSummaryDTO(transactions);
 		}
 		catch(Exception exception)
 		{
@@ -148,11 +149,11 @@ public class TransactionServiceImpl {
 	 * @return list of transaction 
 	 * @throws InvalidTransactionException
 	 */
-	public List<TransactionDTO> getAllTransactionsByCustomerId(Long id) throws InvalidTransactionException {
+	public List<TransactionSummaryDTO> getAllTransactionsByCustomerId(Long id) throws InvalidTransactionException {
 		// TODO Auto-generated method stub
 		try {			
 			List<Transaction> transactions =transactionRepository.findAllByCustomer_CustomerId(id);
-			return transactionMapper.toDTO(transactions);
+			return transactionMapper.toSummaryDTO(transactions);
 		}
 		catch(Exception exception)
 		{

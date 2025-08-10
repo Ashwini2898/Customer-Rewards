@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.rewardsystem.rewardmanager.dto.TransactionDTO;
+import com.rewardsystem.rewardmanager.dto.TransactionSummaryDTO;
 import com.rewardsystem.rewardmanager.rewardException.InvalidTransactionException;
 import com.rewardsystem.rewardmanager.rewardService.TransactionServiceImpl;
 
@@ -94,7 +95,7 @@ class TransactionControllerTest {
 
 	@Test
 	void getCustomerTransactions_success() throws Exception {
-		TransactionDTO dto = new TransactionDTO();
+		TransactionSummaryDTO dto = new TransactionSummaryDTO();
 		dto.setTransactionId(1L);
 
 		when(transactionService.getCustomerTransactions(anyLong(), any(LocalDateTime.class), any(LocalDateTime.class)))
@@ -109,7 +110,7 @@ class TransactionControllerTest {
 
 	@Test
 	void getCustomerAllTransactions_success() throws Exception {
-		TransactionDTO dto = new TransactionDTO();
+		TransactionSummaryDTO dto = new TransactionSummaryDTO();
 		dto.setTransactionId(1L);
 
 		when(transactionService.getAllTransactionsByCustomerId(1L))
