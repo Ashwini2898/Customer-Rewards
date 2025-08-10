@@ -78,6 +78,32 @@ It includes REST APIs for managing customers, transactions, and calculating rewa
 
 **GET	/api/transactions/customers/{id}/getAllTransactionForCustomer**:-	Get all transactions for a customer
 
+## 📸 Example cURL Commands & Responses
+
+### 1. Create Transaction for Amount = 50
+![Create Transaction 50](Document/CreateTransactionForAmount50.png)
+
+### 2. Create Transaction for Amount = 101
+![Create Transaction 101](Document/CreateTransactionForAmount101.png)
+
+### 7. Transaction for Invalid Customer ID
+![Invalid Customer Transaction](Document/TransactionForInvalidCustomerID.png)
+
+### 3. Get All Transactions
+![Get All Transactions](Document/GetAllTransaction.png)
+
+### 4. Get All Transactions for a Customer by ID
+![Get All Transactions for Customer](Document/GetAllTransactionForACustomerByID.png)
+
+### 5. Get Customer by ID
+![Get Customer by ID](Document/GetCustomerByID.png)
+
+### 6. Get Total Points for Customer
+![Get Total Points](Document/GetTotalPointsforCustomer.png)
+
+### 8. Get Transactions by Customer ID and Date
+![Transaction by ID and Date](Document/getTransactionwithCustomerIDAndDate.png)
+
 ## ⚠️ **Error Handling**
 
 Custom Exceptions are handled as follows:
