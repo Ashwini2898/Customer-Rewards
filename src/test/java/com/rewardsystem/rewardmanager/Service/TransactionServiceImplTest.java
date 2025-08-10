@@ -22,6 +22,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.rewardsystem.rewardmanager.dto.TransactionDTO;
+import com.rewardsystem.rewardmanager.dto.TransactionSummaryDTO;
 import com.rewardsystem.rewardmanager.mapper.TransactionMapper;
 import com.rewardsystem.rewardmanager.rewardEntity.Customer;
 import com.rewardsystem.rewardmanager.rewardEntity.Transaction;
@@ -48,6 +49,7 @@ class TransactionServiceImplTest {
 	private Customer customer;
 	private Transaction transaction;
 	private TransactionDTO transactionDTO;
+	private TransactionSummaryDTO transactionSummaryDTO;
 
 	@BeforeEach
 	void setUp() {
@@ -70,6 +72,11 @@ class TransactionServiceImplTest {
 		transactionDTO.setCustomerId(1L);
 		transactionDTO.setAmountSpent(120.0);
 		transactionDTO.setAwardedPoints(90);
+		
+		transactionSummaryDTO = new TransactionSummaryDTO();
+		transactionSummaryDTO.setTransactionId(10L);
+		transactionSummaryDTO.setAmountSpent(120.0);
+		transactionSummaryDTO.setAwardedPoints(90);
 	}
 
 	@Test
@@ -141,26 +148,26 @@ class TransactionServiceImplTest {
 
 		when(transactionRepository.findAllByCustomer_CustomerIdAndDateBetween(1L, from, to))
 		.thenReturn(Arrays.asList(transaction));
-		when(transactionMapper.toDTO(anyList())).thenReturn(List.of(transactionDTO));
+		when(transactionMapper.toSummaryDTO(anyList())).thenReturn(List.of(transactionSummaryDTO));
 
-		List<TransactionDTO> result = transactionService.getCustomerTransactions(1L, from, to);
+		List<TransactionSummaryDTO> result = transactionService.getCustomerTransactions(1L, from, to);
 
 		assertEquals(1, result.size());
 		verify(transactionRepository).findAllByCustomer_CustomerIdAndDateBetween(1L, from, to);
-		verify(transactionMapper).toDTO(anyList());
+		verify(transactionMapper).toSummaryDTO(anyList());
 	}
 
 	@Test
 	void verifyGetAllTransactionsByCustomerId_Success() throws InvalidTransactionException {
 		when(transactionRepository.findAllByCustomer_CustomerId(1L))
 		.thenReturn(Collections.singletonList(transaction));
-		when(transactionMapper.toDTO(anyList())).thenReturn(List.of(transactionDTO));
+		when(transactionMapper.toSummaryDTO(anyList())).thenReturn(List.of(transactionSummaryDTO));
 
-		List<TransactionDTO> result = transactionService.getAllTransactionsByCustomerId(1L);
+		List<TransactionSummaryDTO> result = transactionService.getAllTransactionsByCustomerId(1L);
 
 		assertEquals(1, result.size());
 		verify(transactionRepository).findAllByCustomer_CustomerId(1L);
-		verify(transactionMapper).toDTO(anyList());
+		verify(transactionMapper).toSummaryDTO(anyList());
 	}
 }
 

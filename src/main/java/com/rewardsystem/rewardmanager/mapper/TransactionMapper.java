@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
 import com.rewardsystem.rewardmanager.dto.TransactionDTO;
+import com.rewardsystem.rewardmanager.dto.TransactionSummaryDTO;
 import com.rewardsystem.rewardmanager.rewardEntity.Transaction;
 
 /**
@@ -36,4 +37,15 @@ public class TransactionMapper {
 				.map(this::toDTO)
 				.collect(Collectors.toList());
 	}	
+
+	public List<TransactionSummaryDTO> toSummaryDTO(List<Transaction> transactions) {
+		return transactions.stream()
+				.map(t -> new TransactionSummaryDTO(
+						t.getTransactionId(),
+						t.getAmountSpent(),
+						t.getDate(),
+						t.getAwardedPoints()
+						))
+				.collect(Collectors.toList());
+	}
 }

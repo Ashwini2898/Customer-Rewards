@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.rewardsystem.rewardmanager.dto.TransactionDTO;
+import com.rewardsystem.rewardmanager.dto.TransactionSummaryDTO;
 import com.rewardsystem.rewardmanager.rewardException.InvalidTransactionException;
 import com.rewardsystem.rewardmanager.rewardService.TransactionServiceImpl;
 
@@ -104,7 +105,7 @@ public class TransactionController {
 	 * @return list of transaction within given fromDate and toDate
 	 */
 	@GetMapping("/customers/{id}/getTransactionByCustomerID")
-	public ResponseEntity<List<TransactionDTO>> getCustomerTransactions(@PathVariable Long id, 
+	public ResponseEntity<List<TransactionSummaryDTO>> getCustomerTransactions(@PathVariable Long id, 
 			@RequestParam  @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate fromDate ,
 			@RequestParam  @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate toDate ) {
 		try {
@@ -133,7 +134,7 @@ public class TransactionController {
 	 * @return list of transaction 
 	 */
 	@GetMapping("/customers/{id}/getAllTransactionForCustomer")
-	public ResponseEntity<List<TransactionDTO>> getCustomerAllTransactions(@PathVariable Long id){
+	public ResponseEntity<List<TransactionSummaryDTO>> getCustomerAllTransactions(@PathVariable Long id){
 		try {
 			logger.info("Fetching all transactions for customer ID: {}", id);
 			return ResponseEntity.ok(transactionService.getAllTransactionsByCustomerId(id));
