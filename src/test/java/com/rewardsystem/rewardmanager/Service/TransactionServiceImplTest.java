@@ -80,56 +80,6 @@ class TransactionServiceImplTest {
 	}
 
 	@Test
-	void verifyCreateTransaction_Success() throws InvalidTransactionException {
-		when(customerDao.findById(1L)).thenReturn(Optional.of(customer));
-		when(transactionRepository.save(any(Transaction.class))).thenReturn(transaction);
-		when(customerDao.save(any(Customer.class))).thenReturn(customer);
-		when(transactionMapper.toDTO(any(Transaction.class))).thenReturn(transactionDTO);
-
-		TransactionDTO result = transactionService.createTransaction(1L, 120.0);
-
-		assertNotNull(result);
-		assertEquals(10L, result.getTransactionId());
-		assertEquals(1L, result.getCustomerId());
-
-		verify(customerDao).findById(1L);
-		verify(transactionRepository).save(any(Transaction.class));
-		verify(customerDao).save(any(Customer.class));
-		verify(transactionMapper).toDTO(any(Transaction.class));
-	}
-
-	@Test
-	void verifyCreateTransaction_CustomerNotFound() {
-		when(customerDao.findById(1L)).thenReturn(Optional.empty());
-
-		assertThrows(InvalidTransactionException.class, () -> 
-		transactionService.createTransaction(1L, 120.0)
-				);
-
-		verify(customerDao).findById(1L);
-		verify(transactionRepository, never()).save(any());
-	}
-
-	@Test
-	void verifyGetCustomerPoints_Success() throws InvalidTransactionException {
-		when(customerDao.findById(1L)).thenReturn(Optional.of(customer));
-
-		Integer points = transactionService.getCustomerPoints(1L);
-
-		assertEquals(50, points);
-		verify(customerDao).findById(1L);
-	}
-
-	@Test
-	void verifyGetCustomerPoints_CustomerNotFound() {
-		when(customerDao.findById(1L)).thenReturn(Optional.empty());
-
-		assertThrows(InvalidTransactionException.class, () -> 
-		transactionService.getCustomerPoints(1L)
-				);
-	}
-
-	@Test
 	void verifyGetAllTransactions_Success() throws InvalidTransactionException {
 		when(transactionRepository.findAll()).thenReturn(List.of(transaction));
 		when(transactionMapper.toDTO(anyList())).thenReturn(List.of(transactionDTO));
@@ -157,17 +107,6 @@ class TransactionServiceImplTest {
 		verify(transactionMapper).toSummaryDTO(anyList());
 	}
 
-	@Test
-	void verifyGetAllTransactionsByCustomerId_Success() throws InvalidTransactionException {
-		when(transactionRepository.findAllByCustomer_CustomerId(1L))
-		.thenReturn(Collections.singletonList(transaction));
-		when(transactionMapper.toSummaryDTO(anyList())).thenReturn(List.of(transactionSummaryDTO));
 
-		List<TransactionSummaryDTO> result = transactionService.getAllTransactionsByCustomerId(1L);
-
-		assertEquals(1, result.size());
-		verify(transactionRepository).findAllByCustomer_CustomerId(1L);
-		verify(transactionMapper).toSummaryDTO(anyList());
-	}
 }
 

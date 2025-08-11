@@ -13,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -40,61 +39,13 @@ public class TransactionController {
 	private static final Logger logger = LoggerFactory.getLogger(TransactionController.class);
 
 	/**
-	 * get all transactions
-	 * @param customerId is id of customer for whom the transactions are being created
-	 * @param amount 
-	 * @return
-	 */
-	@PostMapping("/new-transaction/")
-	public ResponseEntity<TransactionDTO> createTransaction(@RequestParam Long customerId, @RequestParam double amount) 
-	{
-		try {
-			TransactionDTO transactionDTO = transactionService.createTransaction(customerId, amount);
-			logger.info("Transaction added: {}", transactionDTO);
-			return new ResponseEntity<>(transactionDTO, HttpStatus.CREATED);
-		} 
-		catch(InvalidTransactionException invalidTransactionException) 
-		{
-			logger.error(invalidTransactionException.getMessage());
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST,invalidTransactionException.getMessage());
-		}
-
-	}
-
-	/**
-	 * get points for a  customer
-	 * @param customerId is id of customer to retrieve all points
-	 * @return
-	 */
-	@GetMapping("/customers/{customerId}/points/")
-	public String getCustomerPoints(@PathVariable Long customerId)  {
-		try {
-			Integer points= transactionService.getCustomerPoints(customerId);
-			logger.info("Points added fot customer id "+customerId+" are: " +points);
-			return "total poits are: "+points;
-		}
-		catch(InvalidTransactionException invalidTransactionException) 
-		{
-			logger.error(invalidTransactionException.getMessage());
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST,invalidTransactionException.getMessage());
-		}
-	}
-
-	/**
 	 * All transaction are returned as a list of transaction
 	 * @return 
+	 * @throws InvalidTransactionException 
 	 */
 	@GetMapping("/getAllTransactions")
-	public ResponseEntity<List<TransactionDTO>> getAllTransactions() {
-		try {
-			logger.info("Returning all Transactions for last three months of all customers");
+	public ResponseEntity<List<TransactionDTO>> getAllTransactions() throws InvalidTransactionException {
 			return ResponseEntity.ok(transactionService.getAllTransactions());
-		} 
-		catch(InvalidTransactionException invalidTransactionException) 
-		{
-			logger.error(invalidTransactionException.getMessage());
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST,invalidTransactionException.getMessage());
-		}
 	}
 
 	/**
@@ -103,45 +54,20 @@ public class TransactionController {
 	 * @param fromDate is the start date of the transaction period, in <code>dd-MM-yyyy</code> format
 	 * @param toDate is the end date of the transaction period, in <code>dd-MM-yyyy</code> format
 	 * @return list of transaction within given fromDate and toDate
+	 * @throws InvalidTransactionException 
 	 */
-	@GetMapping("/customers/{id}/getTransactionByCustomerID")
+	@GetMapping("/{id}/getTransactionByCustomerID")
 	public ResponseEntity<List<TransactionSummaryDTO>> getCustomerTransactions(@PathVariable Long id, 
-			@RequestParam  @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate fromDate ,
-			@RequestParam  @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate toDate ) {
-		try {
+			@RequestParam(required=false)  @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate fromDate ,
+			@RequestParam (required=false)  @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate toDate ) throws InvalidTransactionException {
 			if (fromDate != null && toDate != null && toDate.isBefore(fromDate)) {
 				throw new ResponseStatusException(
 						HttpStatus.BAD_REQUEST,
 						"'toDate' should not be earlier than 'fromDate'"
 						);
-			}
-			LocalDateTime start = fromDate.atStartOfDay();
-			LocalDateTime end = toDate.atTime(23, 59, 59);
-			logger.info("Returning all transaction for last three months of customer by its ID");
-			return ResponseEntity.ok(transactionService.getCustomerTransactions(id, start, end));
-
-		} 
-		catch(InvalidTransactionException invalidTransactionException) 
-		{
-			logger.error(invalidTransactionException.getMessage());
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST,invalidTransactionException.getMessage());
-		}
-	}	
-	
-	/**
-	 * 
-	 * @param id to get all transaction specific to a customer
-	 * @return list of transaction 
-	 */
-	@GetMapping("/customers/{id}/getAllTransactionForCustomer")
-	public ResponseEntity<List<TransactionSummaryDTO>> getCustomerAllTransactions(@PathVariable Long id){
-		try {
-			logger.info("Fetching all transactions for customer ID: {}", id);
-			return ResponseEntity.ok(transactionService.getAllTransactionsByCustomerId(id));
-		} catch (InvalidTransactionException e) {
-			logger.error(e.getMessage());
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-		}
-
-	}
+			}			
+			LocalDateTime start = (fromDate != null) ? fromDate.atStartOfDay() : LocalDate.now().minusMonths(3).atStartOfDay();
+		    LocalDateTime end = (toDate != null) ? toDate.atTime(23, 59, 59) : LocalDateTime.now();
+		    return ResponseEntity.ok(transactionService.getCustomerTransactions(id,start, end));			    
+	}		
 }
