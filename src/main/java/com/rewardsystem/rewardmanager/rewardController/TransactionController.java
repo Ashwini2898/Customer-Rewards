@@ -41,7 +41,7 @@ public class TransactionController {
 	 */
 	@GetMapping("/getAllTransactions")
 	public ResponseEntity<List<TransactionDTO>> getAllTransactions() throws InvalidTransactionException {
-			return ResponseEntity.ok(transactionService.getAllTransactions());
+		return ResponseEntity.ok(transactionService.getAllTransactions());
 	}
 
 	/**
@@ -56,14 +56,14 @@ public class TransactionController {
 	public ResponseEntity<List<TransactionSummaryDTO>> getCustomerTransactions(@PathVariable Long id, 
 			@RequestParam(required=false)  @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate fromDate ,
 			@RequestParam (required=false)  @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate toDate ) throws InvalidTransactionException {
-			if (fromDate != null && toDate != null && toDate.isBefore(fromDate)) {
-				throw new ResponseStatusException(
-						HttpStatus.BAD_REQUEST,
-						"'toDate' should not be earlier than 'fromDate'"
-						);
-			}			
-			LocalDateTime start = (fromDate != null) ? fromDate.atStartOfDay() : LocalDate.now().minusMonths(3).atStartOfDay();
-		    LocalDateTime end = (toDate != null) ? toDate.atTime(23, 59, 59) : LocalDateTime.now();
-		    return ResponseEntity.ok(transactionService.getCustomerTransactions(id,start, end));			    
+		if (fromDate != null && toDate != null && toDate.isBefore(fromDate)) {
+			throw new ResponseStatusException(
+					HttpStatus.BAD_REQUEST,
+					"'toDate' should not be earlier than 'fromDate'"
+					);
+		}			
+		LocalDateTime start = (fromDate != null) ? fromDate.atStartOfDay() : LocalDate.now().minusMonths(3).atStartOfDay();
+		LocalDateTime end = (toDate != null) ? toDate.atTime(23, 59, 59) : LocalDateTime.now();
+		return ResponseEntity.ok(transactionService.getCustomerTransactions(id,start, end));			    
 	}		
 }

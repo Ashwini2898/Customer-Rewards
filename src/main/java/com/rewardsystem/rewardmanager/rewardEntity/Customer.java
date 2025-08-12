@@ -97,5 +97,5 @@ public class Customer {
 	public void setRewardPoints(Integer rewardPoints) {
 		this.rewardPoints = rewardPoints;
 	}
-	
+
 }

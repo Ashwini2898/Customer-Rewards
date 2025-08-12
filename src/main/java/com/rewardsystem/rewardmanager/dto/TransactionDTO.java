@@ -10,24 +10,24 @@ import jakarta.validation.constraints.NotNull;
  *
  */
 public class TransactionDTO {
-	
+
 	@NotNull
 	private Long customerId;
-	
+
 	@NotNull
-    private String customerName;
-	
+	private String customerName;
+
 	@NotNull
-    private Double totalPoints;
-	
+	private Double totalPoints;
+
 	@NotNull
-    private Map<String, Double> monthlyPoints; 
-	
+	private Map<String, Double> monthlyPoints; 
+
 	@NotNull
-    private List<TransactionSummaryDTO> transactions;
-	
+	private List<TransactionSummaryDTO> transactions;
+
 	public TransactionDTO(){};
-	
+
 	public TransactionDTO(@NotNull Long customerId, @NotNull String customerName, @NotNull Double totalPoints,
 			@NotNull Map<String, Double> monthlyPoints, @NotNull List<TransactionSummaryDTO> transactions) {
 		super();
@@ -79,5 +79,5 @@ public class TransactionDTO {
 	public List<TransactionSummaryDTO> getTransactions() {
 		return transactions;
 	} 
-	
+
 }

@@ -5,19 +5,19 @@ import java.time.LocalDateTime;
 import jakarta.validation.constraints.NotNull;
 
 public class TransactionSummaryDTO {
-	
+
 	@NotNull
 	private Long transactionId;
-	
+
 	@NotNull
-    private Double amountSpent;
-	
+	private Double amountSpent;
+
 	@NotNull
-    private LocalDateTime date;
-	
+	private LocalDateTime date;
+
 	@NotNull
-    private Double awardedPoints;
-    
+	private Double awardedPoints;
+
 	public TransactionSummaryDTO() {}
 
 	public TransactionSummaryDTO(@NotNull Long transactionId,@NotNull Double amountSpent,@NotNull LocalDateTime date,@NotNull Double awardedPoints) {
@@ -58,5 +58,5 @@ public class TransactionSummaryDTO {
 	public Double getAwardedPoints() {
 		return awardedPoints;
 	}	
-	
+
 }
