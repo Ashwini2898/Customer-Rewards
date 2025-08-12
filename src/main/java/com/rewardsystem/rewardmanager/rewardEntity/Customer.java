@@ -4,8 +4,6 @@ import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -29,6 +27,7 @@ import lombok.NoArgsConstructor;
 public class Customer {
 
 	@Id
+	@NotNull
 	@Column(name = "customer_id")
 	private Long customerId;
 
@@ -44,12 +43,15 @@ public class Customer {
 	@Column(name = "customer_mobile")
 	private String custMobile;
 
+	@NotNull
 	@Column(name = "total_spent")
 	private Double totalSpent;
 
+	@NotNull
 	@Column(name = "reward_points")
 	private Integer rewardPoints =0;
 
+	@NotNull
 	@OneToMany(mappedBy = "customer")
 	private List<Transaction> transaction;
 
