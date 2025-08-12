@@ -3,7 +3,7 @@ package com.rewardsystem.rewardmanager.rewardException;
 /**
  * Custom exception to be thrown when a resource (e.g. Transaction)is not found.
  */
-public class InvalidTransactionException extends Exception{
+public class InvalidTransactionException extends RuntimeException{
 
 	private String message;
 

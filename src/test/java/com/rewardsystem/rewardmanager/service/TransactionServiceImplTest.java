@@ -1,6 +1,7 @@
-package com.rewardsystem.rewardmanager.Service;
+package com.rewardsystem.rewardmanager.service;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -8,6 +9,7 @@ import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -24,15 +26,11 @@ import com.rewardsystem.rewardmanager.mapper.TransactionMapper;
 import com.rewardsystem.rewardmanager.rewardEntity.Customer;
 import com.rewardsystem.rewardmanager.rewardEntity.Transaction;
 import com.rewardsystem.rewardmanager.rewardException.InvalidTransactionException;
-import com.rewardsystem.rewardmanager.rewardRepository.CustomerRepositoryDao;
 import com.rewardsystem.rewardmanager.rewardRepository.TransactionRepositoryDao;
 import com.rewardsystem.rewardmanager.rewardService.TransactionServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
 class TransactionServiceImplTest {
-
-	@Mock
-	private CustomerRepositoryDao customerDao;
 
 	@Mock
 	private TransactionRepositoryDao transactionRepository;
@@ -62,14 +60,14 @@ class TransactionServiceImplTest {
 		transaction1.setCustomer(customer);
 		transaction1.setAmountSpent(120.0);
 		transaction1.setAwardedPoints(90.0);
-		transaction1.setDate(LocalDateTime.now());
+		transaction1.setDate(LocalDateTime.of(2025, 8, 12, 10, 30, 0));
 
 		transaction2 = new Transaction();
 		transaction2.setTransactionId(5L);
 		transaction2.setCustomer(customer);
 		transaction2.setAmountSpent(100.0);
 		transaction2.setAwardedPoints(50.0);
-		transaction2.setDate(LocalDateTime.now());
+		transaction2.setDate(LocalDateTime.of(2025, 8, 12, 10, 30, 0));
 
 		transactionSummaryDTO = new TransactionSummaryDTO();
 		transactionSummaryDTO.setTransactionId(10L);
@@ -129,8 +127,8 @@ class TransactionServiceImplTest {
 
 	@Test
 	void shouldReturnAllCustomerTransaction_whenGetTransactionByCustomerIDIsCalled() throws InvalidTransactionException {
-		LocalDateTime from = LocalDateTime.now().minusMonths(3);
-		LocalDateTime to = LocalDateTime.now();
+		LocalDateTime from = LocalDateTime.of(2025, 8, 12, 10, 30, 0).minusMonths(3);
+		LocalDateTime to = LocalDateTime.of(2025, 8, 12, 10, 30, 0);
 
 		when(transactionRepository.findAllByCustomer_CustomerIdAndDateBetween(1L, from, to))
 		.thenReturn(Arrays.asList(transaction1));
@@ -150,6 +148,30 @@ class TransactionServiceImplTest {
 		verify(transactionRepository, times(1))
 		.findAllByCustomer_CustomerIdAndDateBetween(1L, from, to);
 		verify(transactionMapper, times(1)).toSummaryDTO(anyList());
+	}
+
+	@Test
+	void shouldThrowException_whenRepositoryThrowsException() {
+		when(transactionRepository.findAll()).thenThrow(new InvalidTransactionException("DB failure"));
+
+		assertThrows(InvalidTransactionException.class, () -> transactionService.getAllTransactions());
+
+		verify(transactionRepository, times(1)).findAll();
+		verify(transactionMapper, times(0)).toDTO(any());
+	}
+
+	@Test
+	void shouldReturnEmptyList_whenNoTransactionsFound() throws InvalidTransactionException {
+		when(transactionRepository.findAll()).thenReturn(Collections.emptyList());
+		when(transactionMapper.toDTO(Collections.emptyList())).thenReturn(Collections.emptyList());
+
+		List<TransactionDTO> result = transactionService.getAllTransactions();
+
+		assertNotNull(result);
+		assertTrue(result.isEmpty());
+
+		verify(transactionRepository, times(1)).findAll();
+		verify(transactionMapper, times(1)).toDTO(Collections.emptyList());
 	}
 }
 

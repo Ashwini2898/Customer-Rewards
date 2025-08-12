@@ -13,11 +13,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import com.rewardsystem.rewardmanager.dto.TransactionDTO;
 import com.rewardsystem.rewardmanager.dto.TransactionSummaryDTO;
+import com.rewardsystem.rewardmanager.rewardException.InvalidTransactionException;
 import com.rewardsystem.rewardmanager.rewardService.TransactionServiceImpl;
 
 @WebMvcTest(TransactionController.class)
@@ -31,10 +33,11 @@ class TransactionControllerTest {
 
 	@Test
 	void shouldReturnAllTransactions_whenGetAllTransactionsIsCalled() throws Exception {
+		LocalDateTime fixedDateTime = LocalDateTime.of(2025, 8, 12, 10, 30, 0);
 		TransactionDTO dto = new TransactionDTO(
 				1L, "John Doe", 90.0,
 				Map.of("2025-08", 90.0),
-				List.of(new TransactionSummaryDTO(1L, 120.0, LocalDateTime.now(), 90.0))
+				List.of(new TransactionSummaryDTO(1L, 120.0, fixedDateTime, 90.0))
 				);
 
 		when(transactionService.getAllTransactions()).thenReturn(List.of(dto));
@@ -54,8 +57,8 @@ class TransactionControllerTest {
 
 	@Test
 	void shouldReturnAllCustomerTransaction_whenGetTransactionByCustomerIDIsCalled() throws Exception {
-		LocalDateTime now = LocalDateTime.now();
-		TransactionSummaryDTO dto = new TransactionSummaryDTO(1L, 120.0, now, 90.0);
+		LocalDateTime fixedDateTime = LocalDateTime.of(2025, 8, 12, 10, 30, 0);
+		TransactionSummaryDTO dto = new TransactionSummaryDTO(1L, 120.0, fixedDateTime, 90.0);
 
 		when(transactionService.getCustomerTransactions(anyLong(), any(LocalDateTime.class), any(LocalDateTime.class)))
 		.thenReturn(List.of(dto));
@@ -68,5 +71,23 @@ class TransactionControllerTest {
 		.andExpect(jsonPath("$[0].amountSpent").value(120.0))
 		.andExpect(jsonPath("$[0].awardedPoints").value(90.0))
 		.andExpect(jsonPath("$[0].date").isNotEmpty());
+	}
+
+	@Test
+	void shouldReturnEmptyList_whenNoTransactionsFound() throws Exception {
+		when(transactionService.getAllTransactions()).thenReturn(Collections.emptyList());
+
+		mockMvc.perform(get("/api/transactions/getAllTransactions")
+				.contentType(MediaType.APPLICATION_JSON))
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("$").isEmpty());
+	}
+
+	@Test
+	void shouldReturnBadRequest_whenFromDateIsInvalidFormat() throws Exception {
+		mockMvc.perform(get("/api/transactions/1/getTransactionByCustomerID")
+				.param("fromDate", "invalid-date")
+				.param("toDate", "05-01-2025"))
+		.andExpect(status().isBadRequest());
 	}
 }
