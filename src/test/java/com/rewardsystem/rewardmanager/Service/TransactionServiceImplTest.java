@@ -16,7 +16,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.rewardsystem.rewardmanager.dto.TransactionDTO;
@@ -47,11 +46,16 @@ class TransactionServiceImplTest {
 	private Customer customer;
 	private Transaction transaction1;
 	private Transaction transaction2;
-	private TransactionDTO transactionDTO;
 	private TransactionSummaryDTO transactionSummaryDTO;
 
 	@BeforeEach
 	void setUp() {
+
+		customer = new Customer();
+		customer.setCustomerId(1L);
+		customer.setCustName("John Doe");
+		customer.setRewardPoints(50);
+		customer.setTotalSpent(100.0);
 
 		transaction1 = new Transaction();
 		transaction1.setTransactionId(10L);
@@ -71,44 +75,81 @@ class TransactionServiceImplTest {
 		transactionSummaryDTO.setTransactionId(10L);
 		transactionSummaryDTO.setAmountSpent(120.0);
 		transactionSummaryDTO.setAwardedPoints(90.0);
+		transactionSummaryDTO.setDate(transaction1.getDate());
 	}
 
 	@Test
-	void verifyGetAllTransactions_Success() throws InvalidTransactionException {
+	void shouldReturnAllTransactions_whenGetAllTransactionsIsCalled() throws InvalidTransactionException {
 		List<Transaction> transactions = Arrays.asList(transaction1, transaction2);
 
 		TransactionDTO dto = new TransactionDTO(
-				1L, "John Doe", 90.0,
-				Map.of("2025-08", 90.0),
-				List.of(new TransactionSummaryDTO(1L, 120.0, transaction1.getDate(), 90.0))
+				1L, "John Doe", 140.0,
+				Map.of("2025-08", 140.0),
+				List.of(
+						new TransactionSummaryDTO(
+								transaction1.getTransactionId(),
+								transaction1.getAmountSpent(),
+								transaction1.getDate(),
+								transaction1.getAwardedPoints()
+								),
+						new TransactionSummaryDTO(
+								transaction2.getTransactionId(),
+								transaction2.getAmountSpent(),
+								transaction2.getDate(),
+								transaction2.getAwardedPoints()
+								)
+						)
 				);
-
-		Mockito.when(transactionRepository.findAll()).thenReturn(transactions);
-		Mockito.when(transactionMapper.toDTO(transactions)).thenReturn(List.of(dto));
+		when(transactionRepository.findAll()).thenReturn(transactions);
+		when(transactionMapper.toDTO(transactions)).thenReturn(List.of(dto));
 
 		List<TransactionDTO> result = transactionService.getAllTransactions();
 
-		assertEquals(1, result.size());
-		assertEquals("John Doe", result.get(0).getCustomerName());
-		Mockito.verify(transactionRepository, times(1)).findAll();
-		Mockito.verify(transactionMapper, times(1)).toDTO(transactions);
+		assertEquals(1, result.size(), "Expected exactly one customer DTO");
+		TransactionDTO returnedDto = result.get(0);
+
+		assertEquals(1L, returnedDto.getCustomerId());
+		assertEquals("John Doe", returnedDto.getCustomerName());
+		assertEquals(140.0, returnedDto.getTotalPoints());
+		assertTrue(returnedDto.getMonthlyPoints().containsKey("2025-08"));
+		assertEquals(140.0, returnedDto.getMonthlyPoints().get("2025-08"));
+
+		assertEquals(2, returnedDto.getTransactions().size());
+		assertEquals(transaction1.getTransactionId(), returnedDto.getTransactions().get(0).getTransactionId());
+		assertEquals(transaction1.getAmountSpent(), returnedDto.getTransactions().get(0).getAmountSpent());
+		assertEquals(transaction1.getAwardedPoints(), returnedDto.getTransactions().get(0).getAwardedPoints());
+
+		assertEquals(transaction2.getTransactionId(), returnedDto.getTransactions().get(1).getTransactionId());
+		assertEquals(transaction2.getAmountSpent(), returnedDto.getTransactions().get(1).getAmountSpent());
+		assertEquals(transaction2.getAwardedPoints(), returnedDto.getTransactions().get(1).getAwardedPoints());
+
+		verify(transactionRepository, times(1)).findAll();
+		verify(transactionMapper, times(1)).toDTO(transactions);
 	}
 
 	@Test
-	void verifyGetCustomerTransactions_Success() throws InvalidTransactionException {
+	void shouldReturnAllCustomerTransaction_whenGetTransactionByCustomerIDIsCalled() throws InvalidTransactionException {
 		LocalDateTime from = LocalDateTime.now().minusMonths(3);
 		LocalDateTime to = LocalDateTime.now();
 
 		when(transactionRepository.findAllByCustomer_CustomerIdAndDateBetween(1L, from, to))
 		.thenReturn(Arrays.asList(transaction1));
-		when(transactionMapper.toSummaryDTO(anyList())).thenReturn(List.of(transactionSummaryDTO));
+		when(transactionMapper.toSummaryDTO(anyList()))
+		.thenReturn(List.of(transactionSummaryDTO));
 
 		List<TransactionSummaryDTO> result = transactionService.getCustomerTransactions(1L, from, to);
 
 		assertEquals(1, result.size());
-		verify(transactionRepository).findAllByCustomer_CustomerIdAndDateBetween(1L, from, to);
-		verify(transactionMapper).toSummaryDTO(anyList());
-	}
+		TransactionSummaryDTO summary = result.get(0);
 
+		assertEquals(10L, summary.getTransactionId());
+		assertEquals(120.0, summary.getAmountSpent());
+		assertEquals(90.0, summary.getAwardedPoints());
+		assertEquals(transaction1.getDate(), summary.getDate());
+
+		verify(transactionRepository, times(1))
+		.findAllByCustomer_CustomerIdAndDateBetween(1L, from, to);
+		verify(transactionMapper, times(1)).toSummaryDTO(anyList());
+	}
 }
 
