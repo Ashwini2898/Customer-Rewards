@@ -2,7 +2,6 @@ package com.rewardsystem.rewardmanager.rewardService;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -73,14 +72,6 @@ public class TransactionServiceImpl {
 		try {			
 			List<Transaction> transactions = transactionRepository
 					.findAllByCustomer_CustomerIdAndDateBetween(customerId, fromDate, toDate);
-			transactions.stream().map(tx -> new TransactionSummaryDTO(
-					tx.getTransactionId(),
-					tx.getAmountSpent(),
-					tx.getDate(),
-					calculatePoints(tx.getAmountSpent())
-					))
-			.collect(Collectors.toList());
-
 			return transactionMapper.toSummaryDTO(transactions);
 		}
 		catch(Exception exception)

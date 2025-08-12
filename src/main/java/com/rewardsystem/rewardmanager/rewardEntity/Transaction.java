@@ -6,13 +6,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -29,27 +27,32 @@ import lombok.NoArgsConstructor;
 public class Transaction {
 
 	@Id
+	@NotNull
 	@Column(name = "transaction_id")
 	private Long transactionId;
 
+	@NotNull
 	@Column(name = "amount_spent")
 	private Double amountSpent;
 
+	@NotNull
 	@ManyToOne
 	@JoinColumn(name = "customer_id",nullable = false)
 	private Customer customer;
 
+	@NotNull
 	@Column(name="transaction_date",nullable = false)
 	private LocalDateTime date = LocalDateTime.now();
 
+	@NotNull
 	@Column(name = "awarded_points")
-	private Integer awardedPoints;
+	private Double awardedPoints;
 
 	public Long getTransactionId() {
 		return transactionId;
 	}
 
-	public Integer getAwardedPoints() {
+	public Double getAwardedPoints() {
 		return awardedPoints;
 	}
 
@@ -66,7 +69,7 @@ public class Transaction {
 		return customer != null ? customer.getCustomerId() : null;
 	}	
 
-	public void setAwardedPoints(Integer awardedPoints) {
+	public void setAwardedPoints(Double awardedPoints) {
 		this.awardedPoints = awardedPoints;
 	}
 
@@ -85,5 +88,5 @@ public class Transaction {
 	public void setCustomer(Customer customer) {
 		this.customer = customer;
 	}
-	
+
 }

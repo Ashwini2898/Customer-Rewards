@@ -1,24 +1,22 @@
 package com.rewardsystem.rewardmanager.Service;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.rewardsystem.rewardmanager.dto.TransactionDTO;
@@ -47,48 +45,53 @@ class TransactionServiceImplTest {
 	private TransactionServiceImpl transactionService;
 
 	private Customer customer;
-	private Transaction transaction;
+	private Transaction transaction1;
+	private Transaction transaction2;
 	private TransactionDTO transactionDTO;
 	private TransactionSummaryDTO transactionSummaryDTO;
 
 	@BeforeEach
 	void setUp() {
 
-		customer = new Customer();
-		customer.setCustomerId(1L);
-		customer.setCustName("John Doe");
-		customer.setRewardPoints(50);
-		customer.setTotalSpent(100.0);
+		transaction1 = new Transaction();
+		transaction1.setTransactionId(10L);
+		transaction1.setCustomer(customer);
+		transaction1.setAmountSpent(120.0);
+		transaction1.setAwardedPoints(90.0);
+		transaction1.setDate(LocalDateTime.now());
 
-		transaction = new Transaction();
-		transaction.setTransactionId(10L);
-		transaction.setCustomer(customer);
-		transaction.setAmountSpent(120.0);
-		transaction.setAwardedPoints(90);
-		transaction.setDate(LocalDateTime.now());
+		transaction2 = new Transaction();
+		transaction2.setTransactionId(5L);
+		transaction2.setCustomer(customer);
+		transaction2.setAmountSpent(100.0);
+		transaction2.setAwardedPoints(50.0);
+		transaction2.setDate(LocalDateTime.now());
 
-		transactionDTO = new TransactionDTO();
-		transactionDTO.setTransactionId(10L);
-		transactionDTO.setCustomerId(1L);
-		transactionDTO.setAmountSpent(120.0);
-		transactionDTO.setAwardedPoints(90);
-		
 		transactionSummaryDTO = new TransactionSummaryDTO();
 		transactionSummaryDTO.setTransactionId(10L);
 		transactionSummaryDTO.setAmountSpent(120.0);
-		transactionSummaryDTO.setAwardedPoints(90);
+		transactionSummaryDTO.setAwardedPoints(90.0);
 	}
 
 	@Test
 	void verifyGetAllTransactions_Success() throws InvalidTransactionException {
-		when(transactionRepository.findAll()).thenReturn(List.of(transaction));
-		when(transactionMapper.toDTO(anyList())).thenReturn(List.of(transactionDTO));
+		List<Transaction> transactions = Arrays.asList(transaction1, transaction2);
+
+		TransactionDTO dto = new TransactionDTO(
+				1L, "John Doe", 90.0,
+				Map.of("2025-08", 90.0),
+				List.of(new TransactionSummaryDTO(1L, 120.0, transaction1.getDate(), 90.0))
+				);
+
+		Mockito.when(transactionRepository.findAll()).thenReturn(transactions);
+		Mockito.when(transactionMapper.toDTO(transactions)).thenReturn(List.of(dto));
 
 		List<TransactionDTO> result = transactionService.getAllTransactions();
 
 		assertEquals(1, result.size());
-		verify(transactionRepository).findAll();
-		verify(transactionMapper).toDTO(anyList());
+		assertEquals("John Doe", result.get(0).getCustomerName());
+		Mockito.verify(transactionRepository, times(1)).findAll();
+		Mockito.verify(transactionMapper, times(1)).toDTO(transactions);
 	}
 
 	@Test
@@ -97,7 +100,7 @@ class TransactionServiceImplTest {
 		LocalDateTime to = LocalDateTime.now();
 
 		when(transactionRepository.findAllByCustomer_CustomerIdAndDateBetween(1L, from, to))
-		.thenReturn(Arrays.asList(transaction));
+		.thenReturn(Arrays.asList(transaction1));
 		when(transactionMapper.toSummaryDTO(anyList())).thenReturn(List.of(transactionSummaryDTO));
 
 		List<TransactionSummaryDTO> result = transactionService.getCustomerTransactions(1L, from, to);
@@ -106,7 +109,6 @@ class TransactionServiceImplTest {
 		verify(transactionRepository).findAllByCustomer_CustomerIdAndDateBetween(1L, from, to);
 		verify(transactionMapper).toSummaryDTO(anyList());
 	}
-
 
 }
 

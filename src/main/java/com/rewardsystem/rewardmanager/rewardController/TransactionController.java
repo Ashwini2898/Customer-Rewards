@@ -5,8 +5,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -29,14 +27,12 @@ import lombok.extern.slf4j.Slf4j;
  * REST Controller to handle transaction related endpoints.
  */
 @RestController
-@RequestMapping("/api/transactions/")
+@RequestMapping("/api/transactions")
 @Slf4j
 public class TransactionController {
 
 	@Autowired
 	private TransactionServiceImpl transactionService;
-
-	private static final Logger logger = LoggerFactory.getLogger(TransactionController.class);
 
 	/**
 	 * All transaction are returned as a list of transaction

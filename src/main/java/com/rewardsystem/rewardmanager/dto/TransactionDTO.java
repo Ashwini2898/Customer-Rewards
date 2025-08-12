@@ -1,68 +1,83 @@
 package com.rewardsystem.rewardmanager.dto;
 
-import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+
+import jakarta.validation.constraints.NotNull;
 
 /**
  *Data Transfer Object (DTO) for transferring transaction data between different layers
  *
  */
 public class TransactionDTO {
-	private Long transactionId;
-	private Double amountSpent;
+	
+	@NotNull
 	private Long customerId;
-	private LocalDateTime date;
-	private Integer awardedPoints;
-
-	public TransactionDTO() {}
-
-	public TransactionDTO(Long transactionId, Double amountSpent, Long customerId,
-			LocalDateTime date, Integer awardedPoints) {
-		this.transactionId = transactionId;
-		this.amountSpent = amountSpent;
+	
+	@NotNull
+    private String customerName;
+	
+	@NotNull
+    private Double totalPoints;
+	
+	@NotNull
+    private Map<String, Double> monthlyPoints; 
+	
+	@NotNull
+    private List<TransactionSummaryDTO> transactions;
+	
+	public TransactionDTO(){};
+	
+	public TransactionDTO(@NotNull Long customerId, @NotNull String customerName, @NotNull Double totalPoints,
+			@NotNull Map<String, Double> monthlyPoints, @NotNull List<TransactionSummaryDTO> transactions) {
+		super();
 		this.customerId = customerId;
-		this.date = date;
-		this.awardedPoints = awardedPoints;
+		this.customerName = customerName;
+		this.totalPoints = totalPoints;
+		this.monthlyPoints = monthlyPoints;
+		this.transactions = transactions;
 	}
 
-	// Getters & Setters
-	public Long getTransactionId() {
-		return transactionId;
+	//Setters block
+	public void setCustomerId( @NotNull Long customerId) {
+		this.customerId = customerId;
 	}
 
-	public void setTransactionId(Long transactionId) {
-		this.transactionId = transactionId;
+	public void setCustomerName(@NotNull String customerName) {
+		this.customerName = customerName;
 	}
 
-	public Double getAmountSpent() {
-		return amountSpent;
+	public void setTotalPoints(@NotNull Double totalPoints) {
+		this.totalPoints = totalPoints;
 	}
 
-	public void setAmountSpent(Double amountSpent) {
-		this.amountSpent = amountSpent;
+	public void setMonthlyPoints(@NotNull Map<String, Double> monthlyPoints) {
+		this.monthlyPoints = monthlyPoints;
 	}
 
+	public void setTransactions(@NotNull List<TransactionSummaryDTO> transactions) {
+		this.transactions = transactions;
+	}
+
+	//Getter Block
 	public Long getCustomerId() {
 		return customerId;
 	}
 
-	public void setCustomerId(Long customerId) {
-		this.customerId = customerId;
+	public String getCustomerName() {
+		return customerName;
 	}
 
-	public LocalDateTime getDate() {
-		return date;
+	public Double getTotalPoints() {
+		return totalPoints;
 	}
 
-	public void setDate(LocalDateTime date) {
-		this.date = date;
+	public Map<String, Double> getMonthlyPoints() {
+		return monthlyPoints;
 	}
 
-	public Integer getAwardedPoints() {
-		return awardedPoints;
-	}
-
-	public void setAwardedPoints(Integer awardedPoints) {
-		this.awardedPoints = awardedPoints;
-	}
-
+	public List<TransactionSummaryDTO> getTransactions() {
+		return transactions;
+	} 
+	
 }

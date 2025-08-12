@@ -2,36 +2,44 @@ package com.rewardsystem.rewardmanager.dto;
 
 import java.time.LocalDateTime;
 
+import jakarta.validation.constraints.NotNull;
+
 public class TransactionSummaryDTO {
+	
+	@NotNull
 	private Long transactionId;
+	
+	@NotNull
     private Double amountSpent;
+	
+	@NotNull
     private LocalDateTime date;
-    private Integer awardedPoints;
-    
+	
+	@NotNull
+    private Double awardedPoints;
     
 	public TransactionSummaryDTO() {}
 
-	public TransactionSummaryDTO(Long transactionId, Double amountSpent, LocalDateTime date, Integer awardedPoints) {
-		super();
+	public TransactionSummaryDTO(@NotNull Long transactionId,@NotNull Double amountSpent,@NotNull LocalDateTime date,@NotNull Double awardedPoints) {
 		this.transactionId = transactionId;
 		this.amountSpent = amountSpent;
 		this.date = date;
 		this.awardedPoints = awardedPoints;
 	}
 
-	public void setTransactionId(Long transactionId) {
+	public void setTransactionId(@NotNull Long transactionId) {
 		this.transactionId = transactionId;
 	}
 
-	public void setAmountSpent(Double amountSpent) {
+	public void setAmountSpent(@NotNull Double amountSpent) {
 		this.amountSpent = amountSpent;
 	}
 
-	public void setDate(LocalDateTime date) {
+	public void setDate(@NotNull LocalDateTime date) {
 		this.date = date;
 	}
 
-	public void setAwardedPoints(Integer awardedPoints) {
+	public void setAwardedPoints(@NotNull Double awardedPoints) {
 		this.awardedPoints = awardedPoints;
 	}
 
@@ -47,9 +55,8 @@ public class TransactionSummaryDTO {
 		return date;
 	}
 
-	public Integer getAwardedPoints() {
+	public Double getAwardedPoints() {
 		return awardedPoints;
-	}
-
+	}	
 	
 }
