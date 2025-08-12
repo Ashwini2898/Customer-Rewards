@@ -12,7 +12,6 @@ It includes REST APIs for managing customers, transactions, and calculating rewa
   - 📊 View reward points for a customer
 
 - **💳 Transaction Management**
-  - ➕ Create new transactions
   - 📜 Fetch all transactions
   - ⏳ Get transactions within a date range
   - 🔍 Retrieve transactions by customer ID
@@ -45,19 +44,19 @@ It includes REST APIs for managing customers, transactions, and calculating rewa
 
 ├── com.rewardsystem.rewardmanager
 
-├── controller # REST controllers (CustomerController, TransactionController)
+├── controller # REST controllers ( TransactionController)
 
-├── dto # Data Transfer Objects (CustomerDTO, TransactionDTO)
+├── dto # Data Transfer Objects ( TransactionDTO, TransactionSummarDTO)
 
 ├── entity # JPA Entities (Customer, Transaction)
 
-├── mapper # (CustomerMapper, TransactionMapper)
+├── mapper # (TransactionMapper)
 
 ├── repository # Spring Data JPA Repositories (CustomerRepositoryDao, TransactionRepositoryDao)
 
-├── serviceImpl # Service implementations (CustomerServiceImpl, TransactionServiceImpl)
+├── serviceImpl # Service implementations (TransactionServiceImpl)
 
-└── exception # Custom exceptions (CustomerNotFoundException, InvalidTransactionException)
+└── exception # Custom exceptions (CustomerInvalidTransactionException)
 
 ## 📡 **API Endpoints**
 
@@ -67,42 +66,28 @@ It includes REST APIs for managing customers, transactions, and calculating rewa
 
  ### 💳 **Transaction APIs**
 
-
-**POST	/api/transactions/new-transaction/**:- Create a new transaction
-
-**GET	/api/transactions/customers/{customerId}/points/**:-	Get total reward points
-
 **GET	/api/transactions/getAllTransactions**:-	Get all transactions
 
 **GET	/api/transactions/customers/{id}/getTransactionByCustomerID?fromDate=dd-MM-yyyy&toDate=dd-MM-yyyy**:-	Get transactions within date range
 
-**GET	/api/transactions/customers/{id}/getAllTransactionForCustomer**:-	Get all transactions for a customer
-
 ## 📸 Example cURL Commands & Responses
 
-### 1. Create Transaction for Amount = 50
-![Create Transaction 50](Document/CreateTransactionForAmount50.png)
-
-### 2. Create Transaction for Amount = 101
-![Create Transaction 101](Document/CreateTransactionForAmount101.png)
-
-### 7. Transaction for Invalid Customer ID
-![Invalid Customer Transaction](Document/TransactionForInvalidCustomerID.png)
-
-### 3. Get All Transactions
+### 1. Get All Transactions
 ![Get All Transactions](Document/GetAllTransaction.png)
 
-### 4. Get All Transactions for a Customer by ID
-![Get All Transactions for Customer](Document/GetAllTransactionForACustomerByID.png)
-
-### 5. Get Customer by ID
-![Get Customer by ID](Document/GetCustomerByID.png)
-
-### 6. Get Total Points for Customer
-![Get Total Points](Document/GetTotalPointsforCustomer.png)
-
-### 8. Get Transactions by Customer ID and Date
+### 2. Get Transactions by Customer ID and Date
 ![Transaction by ID and Date](Document/getTransactionwithCustomerIDAndDate.png)
+
+## 📸 Example Swagger Response
+
+### 1. Get All Transactions
+![Get All Transactions](./Document/SwaggerGetAllTransactions.png)
+
+### 2. Get Transactions by Customer ID 
+![Transaction by ID and Date](./Document/SwaggerResponseForGetAllTransactionByCustomerID.png)
+
+### 3. Get Transactions by Customer ID and Date
+![Transaction by ID and Date](./Document/SwaggerGetTransactionByCustomerIdWithDate.png)
 
 ## ⚠️ **Error Handling**
 
