@@ -30,8 +30,8 @@ public class TransactionServiceImpl {
 	/**
 	 * method to calculate Points for total expenditure
 	 */
-	private int calculatePoints(double amount) {
-		int points = 0;
+	private double calculatePoints(double amount) {
+		double points = 0;
 
 		if (amount > 100) {
 			points += (int)((amount - 100) * 2); // > 100$ → 2 points
