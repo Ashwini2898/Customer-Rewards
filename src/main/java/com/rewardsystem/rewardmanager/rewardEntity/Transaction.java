@@ -21,7 +21,6 @@ import lombok.NoArgsConstructor;
  */
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
 @Entity
 @Table(name="transaction_manager")
 public class Transaction {
@@ -87,6 +86,19 @@ public class Transaction {
 
 	public void setCustomer(Customer customer) {
 		this.customer = customer;
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+	    if (this == o) return true;
+	    if (!(o instanceof Transaction)) return false;
+	    Transaction that = (Transaction) o;
+	    return transactionId != null && transactionId.equals(that.transactionId);
+	}
+
+	@Override
+	public int hashCode() {
+	    return getClass().hashCode();
 	}
 
 }

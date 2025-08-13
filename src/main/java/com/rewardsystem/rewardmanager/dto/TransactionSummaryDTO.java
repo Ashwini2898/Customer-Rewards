@@ -2,6 +2,8 @@ package com.rewardsystem.rewardmanager.dto;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import jakarta.validation.constraints.NotNull;
 
 public class TransactionSummaryDTO {
@@ -13,6 +15,7 @@ public class TransactionSummaryDTO {
 	private Double amountSpent;
 
 	@NotNull
+	@JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
 	private LocalDateTime date;
 
 	@NotNull
@@ -59,4 +62,14 @@ public class TransactionSummaryDTO {
 		return awardedPoints;
 	}	
 
+	@Override
+	public String toString() {
+		return "TransactionSummaryDTO{" +
+				"transactionId=" + transactionId +
+				", amountSpent=" + amountSpent +
+				", date=" + date +
+				", awardedPoints=" + awardedPoints +
+				'}';
+
+	}
 }

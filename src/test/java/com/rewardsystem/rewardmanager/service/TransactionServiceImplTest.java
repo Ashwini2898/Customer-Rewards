@@ -52,7 +52,7 @@ class TransactionServiceImplTest {
 		customer = new Customer();
 		customer.setCustomerId(1L);
 		customer.setCustName("John Doe");
-		customer.setRewardPoints(50);
+		customer.setRewardPoints(50.0);
 		customer.setTotalSpent(100.0);
 
 		transaction1 = new Transaction();

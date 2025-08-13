@@ -29,14 +29,17 @@ public class TransactionServiceImpl {
 
 	@Autowired
 	private TransactionMapper transactionMapper;
+	
+	private static final double POINTS_THRESHOLD_1 = 50;
+    private static final double POINTS_THRESHOLD_2 = 100;
 
 	/**
 	 * method to calculate Points for total expenditure
 	 */
 	private static double calculatePoints(double amount) {
-		if (amount <= 50) return 0;
-		if (amount <= 100) return amount - 50;
-		return 50 + (amount - 100) * 2;
+		if (amount <= POINTS_THRESHOLD_1) return 0;
+        if (amount <= POINTS_THRESHOLD_2) return amount - POINTS_THRESHOLD_1;
+        return (POINTS_THRESHOLD_2 - POINTS_THRESHOLD_1) + (amount - POINTS_THRESHOLD_2) * 2;
 	}
 
 	private void updatePointsIfNeeded(Transaction t) {

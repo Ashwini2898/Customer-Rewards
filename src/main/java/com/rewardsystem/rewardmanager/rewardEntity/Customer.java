@@ -21,7 +21,6 @@ import lombok.NoArgsConstructor;
  */
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
 @Entity
 @Table(name="customer_master")
 public class Customer {
@@ -31,13 +30,11 @@ public class Customer {
 	@Column(name = "customer_id")
 	private Long customerId;
 
-	@NotNull
 	@NotBlank(message="Please enter your name")
 	@Size(min=2, max=30,message=" Name should have atleast 2 characters")
 	@Column(name = "customer_name")
 	private String custName;
 
-	@NotNull
 	@NotBlank(message="Please enter your phone number")
 	@Pattern(regexp="([7-9][0-9]{9})")
 	@Column(name = "customer_mobile")
@@ -48,12 +45,12 @@ public class Customer {
 	private Double totalSpent;
 
 	@NotNull
-	@Column(name = "reward_points")
-	private Integer rewardPoints =0;
+	@Column(name = "total_points")
+	private Double totalPoints =0.0;
 
 	@NotNull
 	@OneToMany(mappedBy = "customer")
-	private List<Transaction> transaction;
+	private List<Transaction> transactions;
 
 	// Getters Block
 	public Long getCustomerId() {
@@ -68,8 +65,8 @@ public class Customer {
 		return custMobile;
 	}
 
-	public Integer getRewardPoints() {
-		return rewardPoints;
+	public Double getRewardPoints() {
+		return totalPoints;
 	}
 
 	public Double getTotalSpent() {
@@ -94,8 +91,8 @@ public class Customer {
 
 	}
 
-	public void setRewardPoints(Integer rewardPoints) {
-		this.rewardPoints = rewardPoints;
+	public void setRewardPoints(Double rewardPoints) {
+		this.totalPoints = rewardPoints;
 	}
 
 }
