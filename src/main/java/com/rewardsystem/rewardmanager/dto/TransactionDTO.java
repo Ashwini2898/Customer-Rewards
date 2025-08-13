@@ -29,12 +29,11 @@ public class TransactionDTO {
 	public TransactionDTO(){};
 
 	public TransactionDTO(@NotNull Long customerId, @NotNull String customerName, @NotNull Double totalPoints,
-			@NotNull Map<String, Double> monthlyPoints, @NotNull List<TransactionSummaryDTO> transactions) {
+			 @NotNull List<TransactionSummaryDTO> transactions) {
 		super();
 		this.customerId = customerId;
 		this.customerName = customerName;
 		this.totalPoints = totalPoints;
-		this.monthlyPoints = monthlyPoints;
 		this.transactions = transactions;
 	}
 
@@ -70,10 +69,6 @@ public class TransactionDTO {
 
 	public Double getTotalPoints() {
 		return totalPoints;
-	}
-
-	public Map<String, Double> getMonthlyPoints() {
-		return monthlyPoints;
 	}
 
 	public List<TransactionSummaryDTO> getTransactions() {

@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,6 +44,7 @@ class TransactionServiceImplTest {
 	private Transaction transaction1;
 	private Transaction transaction2;
 	private TransactionSummaryDTO transactionSummaryDTO;
+	private TransactionDTO dto;
 
 	@BeforeEach
 	void setUp() {
@@ -74,15 +74,9 @@ class TransactionServiceImplTest {
 		transactionSummaryDTO.setAmountSpent(120.0);
 		transactionSummaryDTO.setAwardedPoints(90.0);
 		transactionSummaryDTO.setDate(transaction1.getDate());
-	}
-
-	@Test
-	void shouldReturnAllTransactions_whenGetAllTransactionsIsCalled() throws InvalidTransactionException {
-		List<Transaction> transactions = Arrays.asList(transaction1, transaction2);
-
-		TransactionDTO dto = new TransactionDTO(
+		
+		 dto = new TransactionDTO(
 				1L, "John Doe", 140.0,
-				Map.of("2025-08", 140.0),
 				List.of(
 						new TransactionSummaryDTO(
 								transaction1.getTransactionId(),
@@ -98,6 +92,12 @@ class TransactionServiceImplTest {
 								)
 						)
 				);
+	}
+
+	@Test
+	void shouldReturnAllTransactions_whenGetAllTransactionsIsCalled() throws InvalidTransactionException {
+		List<Transaction> transactions = Arrays.asList(transaction1, transaction2);
+
 		when(transactionRepository.findAll()).thenReturn(transactions);
 		when(transactionMapper.toDTO(transactions)).thenReturn(List.of(dto));
 
@@ -109,8 +109,6 @@ class TransactionServiceImplTest {
 		assertEquals(1L, returnedDto.getCustomerId());
 		assertEquals("John Doe", returnedDto.getCustomerName());
 		assertEquals(140.0, returnedDto.getTotalPoints());
-		assertTrue(returnedDto.getMonthlyPoints().containsKey("2025-08"));
-		assertEquals(140.0, returnedDto.getMonthlyPoints().get("2025-08"));
 
 		assertEquals(2, returnedDto.getTransactions().size());
 		assertEquals(transaction1.getTransactionId(), returnedDto.getTransactions().get(0).getTransactionId());
@@ -173,5 +171,6 @@ class TransactionServiceImplTest {
 		verify(transactionRepository, times(1)).findAll();
 		verify(transactionMapper, times(1)).toDTO(Collections.emptyList());
 	}
+	
 }
 

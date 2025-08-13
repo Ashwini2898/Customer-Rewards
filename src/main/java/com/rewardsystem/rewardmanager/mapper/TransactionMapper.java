@@ -3,6 +3,7 @@ package com.rewardsystem.rewardmanager.mapper;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,27 +58,28 @@ public class TransactionMapper {
 	}
 
 	public List<TransactionDTO> toDTO(List<Transaction> transactions)  {
-		if (transactions == null) {
-			throw new IllegalArgumentException("Transactions list cannot be null");
+
+		for (Transaction t : transactions) {
+			if (t != null && t.getCustomerId() == null) {
+				throw new IllegalArgumentException("Customer ID cannot be null while grouping.");
+			}
 		}
 
 		// Group transactions by customerId
 		Map<Long, List<Transaction>> transactionsByCustomer =
 				transactions.stream()
 				.filter(Objects::nonNull)
-				.peek(t -> {
-					if (t.getCustomerId() == null) {
-						throw new IllegalArgumentException("Customer ID cannot be null while grouping.");
-					}
-				})
 				.collect(Collectors.groupingBy(Transaction::getCustomerId));
 
 		// Build TransactionDTO list
 		return transactionsByCustomer.entrySet().stream().map(entry -> {
 			Long customerId = entry.getKey();
 
-			String customerName = customerRepository.findById(customerId)
-					.map(Customer::getCustName)
+			Map<Long, String> customerNames = customerRepository.findAllById(transactionsByCustomer.keySet())
+					.stream()
+					.collect(Collectors.toMap(Customer::getCustomerId, Customer::getCustName));
+
+			String customerName = Optional.ofNullable(customerNames.get(customerId))
 					.filter(name -> !name.isBlank())
 					.orElse("Unknown");
 
@@ -88,15 +90,6 @@ public class TransactionMapper {
 					.mapToDouble(t -> t.getAwardedPoints() != null ? t.getAwardedPoints() : 0.0)
 					.sum();
 
-			// Monthly points
-			Map<String, Double> monthlyPoints = customerTransactions.stream()
-					.filter(t -> t != null && t.getDate() != null)
-					.collect(Collectors.groupingBy(
-							t -> t.getDate().getYear() + "-" +
-									String.format("%02d", t.getDate().getMonthValue()),
-									Collectors.summingDouble(t -> t.getAwardedPoints() != null ? t.getAwardedPoints() : 0.0)
-							));
-
 			// Transactions summary
 			List<TransactionSummaryDTO> transactionSummaries=toSummaryDTO(customerTransactions);
 
@@ -104,7 +97,6 @@ public class TransactionMapper {
 					customerId,
 					customerName,
 					totalPoints,
-					monthlyPoints,
 					transactionSummaries
 					);
 		}).collect(Collectors.toList());
