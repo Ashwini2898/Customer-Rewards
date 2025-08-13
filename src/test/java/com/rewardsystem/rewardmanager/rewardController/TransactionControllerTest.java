@@ -1,5 +1,7 @@
 package com.rewardsystem.rewardmanager.rewardController;
 
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.Test;
@@ -15,11 +17,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import com.rewardsystem.rewardmanager.dto.TransactionDTO;
 import com.rewardsystem.rewardmanager.dto.TransactionSummaryDTO;
-import com.rewardsystem.rewardmanager.rewardException.InvalidTransactionException;
 import com.rewardsystem.rewardmanager.rewardService.TransactionServiceImpl;
 
 @WebMvcTest(TransactionController.class)
@@ -36,7 +36,6 @@ class TransactionControllerTest {
 		LocalDateTime fixedDateTime = LocalDateTime.of(2025, 8, 12, 10, 30, 0);
 		TransactionDTO dto = new TransactionDTO(
 				1L, "John Doe", 90.0,
-				Map.of("2025-08", 90.0),
 				List.of(new TransactionSummaryDTO(1L, 120.0, fixedDateTime, 90.0))
 				);
 
@@ -48,11 +47,13 @@ class TransactionControllerTest {
 		.andExpect(jsonPath("$[0].customerId").value(1))
 		.andExpect(jsonPath("$[0].customerName").value("John Doe"))
 		.andExpect(jsonPath("$[0].totalPoints").value(90.0))
-		.andExpect(jsonPath("$[0].monthlyPoints['2025-08']").value(90.0))
 		.andExpect(jsonPath("$[0].transactions[0].transactionId").value(1))
 		.andExpect(jsonPath("$[0].transactions[0].amountSpent").value(120.0))
 		.andExpect(jsonPath("$[0].transactions[0].awardedPoints").value(90.0))
 		.andExpect(jsonPath("$[0].transactions[0].date").isNotEmpty());
+
+		verify(transactionService, times(1)).getAllTransactions();
+
 	}
 
 	@Test
@@ -74,6 +75,18 @@ class TransactionControllerTest {
 	}
 
 	@Test
+	void getCustomerTransactions_ShouldReturnEmptyList_WhenNoTransactionsFound() throws Exception {
+		when(transactionService.getCustomerTransactions(anyLong(), any(), any()))
+		.thenReturn(Collections.emptyList());
+
+		mockMvc.perform(get("/api/transactions/1/getTransactionByCustomerID")
+				.param("fromDate", "01-01-2025")
+				.param("toDate", "05-01-2025"))
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("$").isEmpty());
+	}
+
+	@Test
 	void shouldReturnEmptyList_whenNoTransactionsFound() throws Exception {
 		when(transactionService.getAllTransactions()).thenReturn(Collections.emptyList());
 
@@ -88,6 +101,23 @@ class TransactionControllerTest {
 		mockMvc.perform(get("/api/transactions/1/getTransactionByCustomerID")
 				.param("fromDate", "invalid-date")
 				.param("toDate", "05-01-2025"))
+		.andExpect(status().isBadRequest());
+	}
+
+	@Test
+	void getCustomerTransactions_ShouldWorkWithoutDates_WhenParamsAreMissing() throws Exception {
+		when(transactionService.getCustomerTransactions(anyLong(), isNull(), isNull()))
+		.thenReturn(Collections.emptyList());
+
+		mockMvc.perform(get("/api/transactions/1/getTransactionByCustomerID"))
+		.andExpect(status().isOk());
+	}
+
+	@Test
+	void getCustomerTransactions_ShouldReturnBadRequest_WhenFromDateAfterToDate() throws Exception {
+		mockMvc.perform(get("/api/transactions/1/getTransactionByCustomerID")
+				.param("fromDate", "05-01-2025")
+				.param("toDate", "01-01-2025"))
 		.andExpect(status().isBadRequest());
 	}
 }
