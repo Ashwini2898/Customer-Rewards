@@ -19,7 +19,6 @@ import java.util.Map;
 
 import com.rewardsystem.rewardmanager.dto.TransactionDTO;
 import com.rewardsystem.rewardmanager.dto.TransactionSummaryDTO;
-import com.rewardsystem.rewardmanager.rewardException.InvalidTransactionException;
 import com.rewardsystem.rewardmanager.rewardService.TransactionServiceImpl;
 
 @WebMvcTest(TransactionController.class)
