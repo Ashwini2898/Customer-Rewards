@@ -2,6 +2,7 @@ package com.rewardsystem.rewardmanager.dto;
 
 import java.util.List;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 /**
@@ -13,7 +14,7 @@ public class TransactionDTO {
 	@NotNull
 	private Long customerId;
 
-	@NotNull
+	@NotBlank
 	private String customerName;
 
 	@NotNull
@@ -25,8 +26,7 @@ public class TransactionDTO {
 	public TransactionDTO(){}
 
 	public TransactionDTO(@NotNull Long customerId, @NotNull String customerName, @NotNull Double totalPoints,
-			 @NotNull List<TransactionSummaryDTO> transactions) {
-		super();
+			@NotNull List<TransactionSummaryDTO> transactions) {
 		this.customerId = customerId;
 		this.customerName = customerName;
 		this.totalPoints = totalPoints;
