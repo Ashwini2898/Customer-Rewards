@@ -1,7 +1,6 @@
 package com.rewardsystem.rewardmanager.dto;
 
 import java.util.List;
-import java.util.Map;
 
 import jakarta.validation.constraints.NotNull;
 
@@ -21,12 +20,9 @@ public class TransactionDTO {
 	private Double totalPoints;
 
 	@NotNull
-	private Map<String, Double> monthlyPoints; 
-
-	@NotNull
 	private List<TransactionSummaryDTO> transactions;
 
-	public TransactionDTO(){};
+	public TransactionDTO(){}
 
 	public TransactionDTO(@NotNull Long customerId, @NotNull String customerName, @NotNull Double totalPoints,
 			 @NotNull List<TransactionSummaryDTO> transactions) {
@@ -48,10 +44,6 @@ public class TransactionDTO {
 
 	public void setTotalPoints(@NotNull Double totalPoints) {
 		this.totalPoints = totalPoints;
-	}
-
-	public void setMonthlyPoints(@NotNull Map<String, Double> monthlyPoints) {
-		this.monthlyPoints = monthlyPoints;
 	}
 
 	public void setTransactions(@NotNull List<TransactionSummaryDTO> transactions) {
