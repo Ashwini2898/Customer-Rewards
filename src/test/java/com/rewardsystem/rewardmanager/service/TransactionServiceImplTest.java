@@ -74,8 +74,8 @@ class TransactionServiceImplTest {
 		transactionSummaryDTO.setAmountSpent(120.0);
 		transactionSummaryDTO.setAwardedPoints(90.0);
 		transactionSummaryDTO.setDate(transaction1.getDate());
-		
-		 dto = new TransactionDTO(
+
+		dto = new TransactionDTO(
 				1L, "John Doe", 140.0,
 				List.of(
 						new TransactionSummaryDTO(
@@ -171,6 +171,25 @@ class TransactionServiceImplTest {
 		verify(transactionRepository, times(1)).findAll();
 		verify(transactionMapper, times(1)).toDTO(Collections.emptyList());
 	}
-	
+
+	@Test
+	void shouldReturnEmptyList_whenNoTransactionsFoundForCustomer() throws InvalidTransactionException {
+
+		LocalDateTime from = LocalDateTime.of(2025, 8, 12, 10, 30, 0).minusMonths(3);
+		LocalDateTime to = LocalDateTime.of(2025, 8, 12, 10, 30, 0);
+
+		when(transactionRepository.findAllByCustomer_CustomerIdAndDateBetween(1L, from, to))
+		.thenReturn(Collections.emptyList());
+		when(transactionMapper.toSummaryDTO(Collections.emptyList()))
+		.thenReturn(Collections.emptyList());
+
+		List<TransactionSummaryDTO> result = transactionService.getCustomerTransactions(1L, from, to);
+
+		assertTrue(result.isEmpty());
+
+		verify(transactionRepository, times(1))
+		.findAllByCustomer_CustomerIdAndDateBetween(1L, from, to);
+		verify(transactionMapper, times(1)).toSummaryDTO(Collections.emptyList());
+	}
 }
 

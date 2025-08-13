@@ -72,12 +72,12 @@ public class TransactionMapper {
 				.collect(Collectors.groupingBy(Transaction::getCustomerId));
 
 		// Build TransactionDTO list
+		Map<Long, String> customerNames = customerRepository.findAllById(transactionsByCustomer.keySet())
+				.stream()
+				.collect(Collectors.toMap(Customer::getCustomerId, Customer::getCustName));
+
 		return transactionsByCustomer.entrySet().stream().map(entry -> {
 			Long customerId = entry.getKey();
-
-			Map<Long, String> customerNames = customerRepository.findAllById(transactionsByCustomer.keySet())
-					.stream()
-					.collect(Collectors.toMap(Customer::getCustomerId, Customer::getCustName));
 
 			String customerName = Optional.ofNullable(customerNames.get(customerId))
 					.filter(name -> !name.isBlank())
