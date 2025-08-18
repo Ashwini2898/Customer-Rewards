@@ -73,7 +73,7 @@ It includes REST APIs for managing customers, transactions, and calculating rewa
 ## 📸 Example cURL Commands & Responses
 
 ### 1. Get All Transactions
-![Get All Transactions](Document/GetAllTransaction.png)
+![Get All Transactions](Document/GetAllTransactions.png)
 
 ### 2. Get Transactions by Customer ID and Date
 ![Transaction by ID and Date](Document/getTransactionwithCustomerIDAndDate.png)
